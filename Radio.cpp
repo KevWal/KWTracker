@@ -26,7 +26,7 @@ void SetupRTTY()
   // First setup FSK
   SetupFSK();
 #if defined(DEVMODE)          
-  Serial.print(F("[RTTY] Initializing ... "));
+  SERIALDBG.print(F("[RTTY] Initializing ... "));
 #endif
 
   // Struct to hold RTTY settings
@@ -48,13 +48,13 @@ void SetupRTTY()
   if(state == ERR_NONE) 
   {
 #if defined(DEVMODE)            
-    Serial.println(F("success!"));
+    SERIALDBG.println(F("success!"));
 #endif
   } else 
   {
 #if defined(DEVMODE)
-    Serial.print(F("failed, code "));
-    Serial.println(state);
+    SERIALDBG.print(F("failed, code "));
+    SERIALDBG.println(state);
 #endif
     while(true);
   }
@@ -68,7 +68,7 @@ void SetupFSK()
   ResetRadio();
   // Initialize the SX1278
 #if defined(DEVMODE)  
-  Serial.print(F("[SX1278] Initializing ... "));
+  SERIALDBG.print(F("[SX1278] Initializing ... "));
 #endif
 
  // int16_t state = radio.beginFSK();
@@ -98,14 +98,14 @@ void SetupFSK()
   if(state == ERR_NONE) 
   {
 #if defined(DEVMODE)    
-    Serial.println(F("success!"));
+    SERIALDBG.println(F("success!"));
 #endif
   } 
   else 
   {
 #if defined(DEVMODE)    
-    Serial.print(F("failed, code "));
-    Serial.println(state);
+    SERIALDBG.print(F("failed, code "));
+    SERIALDBG.println(state);
 #endif
     while(true);
   }
@@ -117,7 +117,7 @@ void SetupLoRa()
 {
   // Initialize the SX1278
 #if defined(DEVMODE)  
-  Serial.print(F("[LoRA] Initializing ... "));
+  SERIALDBG.print(F("[LoRA] Initializing ... "));
 #endif
 
   ResetRadio();
@@ -184,14 +184,14 @@ void SetupLoRa()
   if(state == ERR_NONE) 
   {
 #if defined(DEVMODE)    
-    Serial.println(F("success!"));
+    SERIALDBG.println(F("success!"));
 #endif    
   } 
   else 
   {
 #if defined(DEVMODE)    
-    Serial.print(F("failed, code "));
-    Serial.println(state);
+    SERIALDBG.print(F("failed, code "));
+    SERIALDBG.println(state);
 #endif    
     while(true);
   }
@@ -223,8 +223,8 @@ void SetupRadio()
 //===============================================================================
 void sendRTTY(String TxLine)
 {
-   // Disable the GPS on the softwareserial temporarily 
-   SerialGPS.end();
+   // Disable the GPS serial temporarily 
+   SERIALGPS.end();
    
    SetupRTTY();
    
@@ -234,14 +234,14 @@ void sendRTTY(String TxLine)
    
    // Send the string 
 #if defined(DEVMODE)   
-   Serial.print(F("Sending RTTY: "));
-   Serial.println(TxLine);
+   SERIALDBG.print(F("Sending RTTY: "));
+   SERIALDBG.println(TxLine);
 #endif   
    
    int state = rtty.println(TxLine); 
 
    // Enable the GPS again.  
-   SerialGPS.begin(GPSBaud);
+   SERIALGPS.begin(GPSBAUD);
 }
 
 
@@ -251,8 +251,8 @@ void sendLoRa(String TxLine)
    SetupLoRa();
 
 #if defined(DEVMODE)      
-   Serial.print(F("Sending LoRa: "));
-   Serial.println(TxLine);
+   SERIALDBG.print(F("Sending LoRa: "));
+   SERIALDBG.println(TxLine);
 #endif
    
    // Send the string

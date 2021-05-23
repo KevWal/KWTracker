@@ -62,8 +62,6 @@
 #include "Settings.h"
 #include "TBTracker.h"
 
-#include <SoftwareSerial.h>
-
 #include <Arduino.h>
 
 /***********************************************************************************
@@ -71,7 +69,6 @@
 *  
 * Normally no change necessary
 ************************************************************************************/
-SoftwareSerial SerialGPS(Rx, Tx);
 char Sentence[SENTENCE_LENGTH];
 long RTTYCounter=0;
 long LoRaCounter=0;
@@ -80,14 +77,22 @@ volatile bool watchdogActivated = true;
 volatile int sleepIterations = 0;
 TGPS UGPS;    // Structure to hold GPS data
 
+//If SerialGPS is defined then we are using a Hardware serial port and dont need Software Serial
+#ifndef SERIALGPS
+  #include <SoftwareSerial.h>
+  SoftwareSerial SERIALGPS(GPSRX, GPSTX);
+#endif
+
+
+
 
 //============================================================================
 void setup()
 {
   // Setup Serial for debugging
-  Serial.begin(DBGBaud);
-  // Setup the Ublox GPS
-  SerialGPS.begin(GPSBaud);
+  SERIALDBG.begin(DBGBAUD);
+  // Setup the UBlox GPS
+  SERIALGPS.begin(GPSBAUD);
 
 #if defined(RESET_TRANS_COUNTERS)
   Reset_Transmission_Counters();
@@ -154,18 +159,18 @@ void loop()
        if (USE_DEEP_SLEEP && UGPS.Satellites > 4)
        {
 #if defined(DEVMODE)        
-         Serial.println("Going to sleep...");
+         SERIALDBG.println("Going to sleep...");
 #endif
          // Set all defined power pins to low
          disable_PowerPins();
-         Serial.flush();
+         SERIALDBG.flush();
          sleepIterations = 0;    
          while (sleepIterations < TIME_TO_SLEEP)
          {
            my_Sleep();
          }
 #if defined(DEVMODE)                 
-        Serial.println("Awake!");
+        SERIALDBG.println("Awake!");
 #endif       
         // Set all defined power pins to high
         enable_PowerPins();

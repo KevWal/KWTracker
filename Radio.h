@@ -3,7 +3,7 @@
 #ifndef RADIO_H
 #define RADIO_H
 
-#include <SoftwareSerial.h>
+#include "Settings.h"
 #include <Arduino.h>
 
 void SetupRTTY();
@@ -20,6 +20,10 @@ void sendRTTY(String TxLine);
 
 void sendLoRa(String TxLine);
 
-extern SoftwareSerial SerialGPS;
+//If SerialGPS is defined then we are using a Hardware serial port and dont need Software Serial
+#ifndef SERIALGPS
+  #include <SoftwareSerial.h>
+  extern SoftwareSerial SERIALGPS;
+#endif
 
 #endif

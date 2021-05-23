@@ -31,8 +31,8 @@ void smartDelay(unsigned long ms)
   unsigned long start = millis();
   do 
   {
-    while (SerialGPS.available())
-      gps.encode(SerialGPS.read());
+    while (SERIALGPS.available())
+      gps.encode(SERIALGPS.read());
   } while (millis() - start < ms);
 }
 
@@ -97,13 +97,13 @@ void processGPSData()
 void printGPSData()
 {
 #if defined(DEVMODE)
-  Serial.print("         Time: "); Serial.print(UGPS.Hours); Serial.print(":"); Serial.print(UGPS.Minutes); Serial.print(":"); Serial.println(UGPS.Seconds);
-  Serial.print("     Latitude: "); Serial.println(UGPS.Latitude, 6);
-  Serial.print("    Longitude: "); Serial.println(UGPS.Longitude, 6);
-  Serial.print(" Altitude (m): "); Serial.println(UGPS.Altitude);
-  Serial.print("   Satellites: "); Serial.println(UGPS.Satellites);
-  Serial.println();
-  Serial.println("-------------------------");
+  SERIALDBG.print("         Time: "); SERIALDBG.print(UGPS.Hours); SERIALDBG.print(":"); SERIALDBG.print(UGPS.Minutes); SERIALDBG.print(":"); SERIALDBG.println(UGPS.Seconds);
+  SERIALDBG.print("     Latitude: "); SERIALDBG.println(UGPS.Latitude, 6);
+  SERIALDBG.print("    Longitude: "); SERIALDBG.println(UGPS.Longitude, 6);
+  SERIALDBG.print(" Altitude (m): "); SERIALDBG.println(UGPS.Altitude);
+  SERIALDBG.print("   Satellites: "); SERIALDBG.println(UGPS.Satellites);
+  SERIALDBG.println();
+  SERIALDBG.println("-------------------------");
 #endif
 }
 
@@ -115,7 +115,7 @@ void SendUBX(unsigned char *Message, int Length)
   
   for (i=0; i<Length; i++)
   {
-    SerialGPS.write(Message[i]);
+    SERIALGPS.write(Message[i]);
   }
 }
 
@@ -131,11 +131,11 @@ void setGPS_DynamicModel3()
    };  
 
 #if defined(DEVMODE)
-  Serial.print("Setting pedestrian mode...");
+  SERIALDBG.print("Setting pedestrian mode...");
 #endif
   SendUBX(setNav, sizeof(setNav));
 #if defined(DEVMODE)
-  Serial.println("Done");
+  SERIALDBG.println("Done");
 #endif
 }
 
@@ -150,11 +150,11 @@ void setGPS_DynamicModel6()
   };
 
 #if defined(DEVMODE)  
-  Serial.print("Setting airborne mode...");
+  SERIALDBG.print("Setting airborne mode...");
 #endif
   SendUBX(setNav, sizeof(setNav));
 #if defined(DEVMODE)  
-  Serial.println("Done");
+  SERIALDBG.println("Done");
 #endif
 }
 

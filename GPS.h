@@ -4,8 +4,7 @@
 #define GPS_H
 
 #include "TBTracker.h"
-
-#include <SoftwareSerial.h>
+#include "Settings.h"
 #include <Arduino.h>
 
 #define PEDESTRIAN 3
@@ -23,7 +22,12 @@ void SendUBX(unsigned char *Message, int Length);
 
 void setDesiredMode(uint8_t aDesiredMode);
 
-extern SoftwareSerial SerialGPS;
 extern TGPS UGPS;
+
+//If SerialGPS is defined then we are using a Hardware serial port and dont need Software Serial
+#ifndef SERIALGPS
+  #include <SoftwareSerial.h>
+  extern SoftwareSerial SERIALGPS;
+#endif
 
 #endif

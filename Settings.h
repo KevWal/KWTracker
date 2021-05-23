@@ -16,6 +16,7 @@
 #define PIN_RESET -1  // Not used in this sketch for sx1278
 #define PIN_DIO1  -1  // Not used in this sketch for sx1278
 
+
 /***********************************************************************************
 * DEFAULT FSK SETTINGS
 *  
@@ -29,6 +30,7 @@
 #define FSK_PREAMBLELENGTH 16
 #define FSK_ENABLEOOK false
 #define FSK_DATASHAPING 0.5
+
 
 /***********************************************************************************
 * RTTY SETTINGS
@@ -48,7 +50,6 @@
 #define RTTY_ASCII_EXTENDED 1        // 8 data bits
 #define RTTY_ITA2  2                 // Baudot 
 
-
 #define RTTY_REPEATS 1 // number of RTTY transmits during a cycle
 
 // Idle carrier in ms before sending actual RTTY string. 
@@ -56,6 +57,7 @@
 // Set to a high value (i.e. 5000 or even higher) if you have a hard time to tune the signal
 #define RTTY_IDLE_TIME 2500          
  
+
 /***********************************************************************************
 * LORA SETTINGS
 *  
@@ -84,6 +86,7 @@
 // Default UKHAS tracker mode only 0,1,2 and 3 are implemented in this code
 #define LORA_MODE 2  // Mode 2 is usually used for simple telemetry data
 #define LORA_REPEATS 1 // number of LoRa transmits during a cycle
+
 
 /***********************************************************************************
 * TRANSMISSIONS SETTINGS
@@ -116,22 +119,30 @@
 /***********************************************************************************
 * DEBUG Mode SETTINGS
 *  
+* Development mode. Uncomment #define DEVMODE to enable for debugging and see debug 
+* info on the serial output defined by SERIALDBG
+* 
 * Change if needed
 ************************************************************************************/
-#define DEVMODE // Development mode. Uncomment to enable for debugging and see debug info on the serial monitor
-static const uint32_t DBGBaud = 9600;
+#define DEVMODE
+#define SERIALDBG Serial1
+#define DBGBAUD 9600
+
 
 /***********************************************************************************
 * GPS SETTINGS
 *  
+* #define SerialGPS as the correct Hardware Serial Port for the GPS, or comment it out 
+* to use Software Serial on the GPS RX and GPS TX ports defined below.
+* White: 7, Green: 8
+* 
 * Change if needed
 ************************************************************************************/
-// GPS Serial device
-// We use SoftwareSerial so these pin numbers are basically free to choose
-// Parameters for the GPS
-// White: 7, green: 8
-static const int Rx = 7, Tx = 8;
-static const uint32_t GPSBaud = 9600;
+#define SERIALGPS Serial
+//#define GPSRX 7
+//#define GPSTX 8
+#define GPSBAUD 9600
+
 
 /***********************************************************************************
 * SENSOR SETTINGS
@@ -165,6 +176,7 @@ static const uint32_t GPSBaud = 9600;
 #define EXTERNALVOLTAGE_PIN A1     // Pin to read the external voltage from
 #define SAMPLE_RES 1024            // 1024 for Uno, Mini, Nano, Mega, Micro. Leonardo. 4096 for Zero, Due and MKR  
 #define DIVIDER_RATIO 1.00         // Leave at 1.00 when using no voltage divider. Set to (R1+R2)/R2 when using a voltage divider.
+
 
 /***********************************************************************************
 * TELEMETRY COUNTERS
