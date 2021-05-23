@@ -1,4 +1,15 @@
-// include the library
+// Radio.cpp
+
+/***********************************************************************************
+* #includes
+*
+* #include user defined headers, followed by 3rd party library headers, then standard 
+* library headers, with the headers in each section sorted alphabetically.
+************************************************************************************/
+#include "Radio.h"
+#include "TBTracker.h"
+#include "Settings.h"
+
 #include <RadioLib.h>
 
 // Change 'SX1278' in the line below to 'SX1276' if you have a SX1276 module.
@@ -17,6 +28,17 @@ void SetupRTTY()
 #if defined(DEVMODE)          
   Serial.print(F("[RTTY] Initializing ... "));
 #endif
+
+  // Struct to hold RTTY settings
+  struct TRTTYSettings
+  {
+    float Frequency = RTTY_FREQUENCY;   // Base frequency
+    uint32_t Shift = RTTY_SHIFT;        // RTTY shift
+    uint16_t Baud = RTTY_BAUD;          // Baud rate
+    uint8_t Encoding = RTTY_ASCII;   // Encoding (ASCII = 7 bits)
+    uint8_t StopBits = RTTY_STOPBITS;   // Number of stopbits 
+  } RTTYSettings;
+
   int16_t state = rtty.begin(RTTYSettings.Frequency,
                      RTTYSettings.Shift,
                      RTTYSettings.Baud,
@@ -51,6 +73,19 @@ void SetupFSK()
 
  // int16_t state = radio.beginFSK();
  
+  // Struct to hold FSK settings
+  struct TFSKSettings
+  {
+    float Frequency = FSK_FREQUENCY;
+    float BitRate = FSK_BITRATE; 
+    float FreqDev = FSK_FREQDEV;
+    float RXBandwidth = FSK_RXBANDWIDTH;
+    int8_t Power = FSK_POWER;                  // in dbM range 2 - 17
+    uint16_t PreambleLength = FSK_PREAMBLELENGTH;
+    bool EnableOOK = FSK_ENABLEOOK;
+    float dataShaping = FSK_DATASHAPING;
+  } FSKSettings;
+
   int16_t state = radio.beginFSK(FSKSettings.Frequency,
                                FSKSettings.BitRate,
                                FSKSettings.FreqDev,
@@ -86,6 +121,21 @@ void SetupLoRa()
 #endif
 
   ResetRadio();
+
+  // Struct to hold LoRA settings
+  struct TLoRaSettings
+  {
+    float Frequency = LORA_FREQUENCY;
+    float Bandwidth = LORA_BANDWIDTH;
+    uint8_t SpreadFactor = LORA_SPREADFACTOR;
+    uint8_t CodeRate = LORA_CODERATE;
+    uint8_t SyncWord = LORA_SYNCWORD;
+    uint8_t Power = LORA_POWER;
+    uint8_t CurrentLimit = LORA_CURRENTLIMIT;
+    uint16_t PreambleLength =  LORA_PREAMBLELENGTH;
+    uint8_t Gain = LORA_GAIN;
+  } LoRaSettings;
+
   // First setup the mode
   // 0 = (normal for telemetry)  Explicit mode, Error coding 4:8, Bandwidth 20.8kHz, SF 11, Low data rate optimize on - NOT IMPLEMENTED YET
   // 1 = (normal for SSDV)       Implicit mode, Error coding 4:5, Bandwidth 20.8kHz,  SF 6, Low data rate optimize off - NOT IMPLEMENTED YET

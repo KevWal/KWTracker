@@ -1,12 +1,10 @@
-#include <SoftwareSerial.h>
-#include "Settings.h"
+// TBTracker.ino
 
 /***********************************************************************************
  *  FIRST THING YOU NEED TO DO IS ADJUST THE SETTINGS IN Settings.h
  *  
  *  Have FUN!
  ***********************************************************************************/
-
 
 /***********************************************************************************
  * LoRa and RTTY tracker for Arduino and SX1278
@@ -24,7 +22,7 @@
  *    
  *  BN22 <> Arduino
  *  ----------------------  
- *  VCC -> 3.3V (red wirre)
+ *  VCC -> 3.3V (red wire)
  *  GND -> GND (black wire)
  *  RX -> D7 (white wire)
  *  TX -> D8 (green wire)
@@ -41,65 +39,32 @@
  *  NSS    -> D10 
  *  3V3    -> 3V3
  *  
- *  Extra librairies needed:
+ *  Extra libraries needed:
  *  https://github.com/jgromes/RadioLib (Radiolib)
  *  https://github.com/mikalhart/TinyGPSPlus (tinyGPS++)
  *  
  *  For payload information and how to get your Payload on the map, see the file Misc.ini from this sketch
  ************************************************************************************/
 
-
 /***********************************************************************************
-* DATA STRUCTS
+* #includes
 *  
 * Normally no change necessary
+*
+* #include user defined headers, followed by 3rd party library headers, then standard 
+* library headers, with the headers in each section sorted alphabetically.
 ************************************************************************************/
-// Struct to hold GPS data
-struct TGPS
-{
-  int Hours, Minutes, Seconds;
-  float Longitude, Latitude;
-  long Altitude;
-  unsigned int Satellites;
-  byte FlightMode;
-} UGPS;
+#include "ADC.h"
+#include "GPS.h"
+#include "Misc.h"
+#include "Radio.h"
+#include "Sleep.h"
+#include "Settings.h"
+#include "TBTracker.h"
 
-// Struct to hold LoRA settings
-struct TLoRaSettings
-{
-  float Frequency = LORA_FREQUENCY;
-  float Bandwidth = LORA_BANDWIDTH;
-  uint8_t SpreadFactor = LORA_SPREADFACTOR;
-  uint8_t CodeRate = LORA_CODERATE;
-  uint8_t SyncWord = LORA_SYNCWORD;
-  uint8_t Power = LORA_POWER;
-  uint8_t CurrentLimit = LORA_CURRENTLIMIT;
-  uint16_t PreambleLength =  LORA_PREAMBLELENGTH;
-  uint8_t Gain = LORA_GAIN;
-} LoRaSettings;
+#include <SoftwareSerial.h>
 
-// Struct to hold FSK settings
-struct TFSKSettings
-{
-  float Frequency = FSK_FREQUENCY;
-  float BitRate = FSK_BITRATE; 
-  float FreqDev = FSK_FREQDEV;
-  float RXBandwidth = FSK_RXBANDWIDTH;
-  int8_t  Power = FSK_POWER;                  // in dbM range 2 - 17
-  uint16_t  PreambleLength = FSK_PREAMBLELENGTH;
-  bool  EnableOOK = FSK_ENABLEOOK;
-  float dataShaping = FSK_DATASHAPING;
-} FSKSettings;
-
-// Struct to hold RTTY settings
-struct TRTTYSettings
-{
-  float Frequency = RTTY_FREQUENCY;   // Base frequency
-  uint32_t Shift = RTTY_SHIFT;        // RTTY shift
-  uint16_t Baud = RTTY_BAUD;          // Baud rate
-  uint8_t Encoding = RTTY_ASCII;   // Encoding (ASCII = 7 bits)
-  uint8_t StopBits = RTTY_STOPBITS;   // Number of stopbits 
-} RTTYSettings;
+#include <Arduino.h>
 
 /***********************************************************************************
 * GLOBALS
@@ -113,15 +78,16 @@ long LoRaCounter=0;
 unsigned long previousTX = 0;
 volatile bool watchdogActivated = true;
 volatile int sleepIterations = 0;
+TGPS UGPS;    // Structure to hold GPS data
 
 
 //============================================================================
 void setup()
 {
   // Setup Serial for debugging
-  Serial.begin(9600);
+  Serial.begin(DBGBaud);
   // Setup the Ublox GPS
-  SerialGPS.begin(GPSBaud);  //TX, RX
+  SerialGPS.begin(GPSBaud);
 
 #if defined(RESET_TRANS_COUNTERS)
   Reset_Transmission_Counters();
@@ -141,7 +107,7 @@ void loop()
    // Watchdog should have been fired before doing anything 
   if (watchdogActivated)
   {
-     // REset the watrchdog and the sleep timer
+     // REset the watchdog and the sleep timer
      watchdogActivated = false;
      
      unsigned long currentMillis = millis();

@@ -20,19 +20,23 @@ The code as is, is for the SX1278 module. If you have a SX1276, then change line
 
 You will need two extra Arduino libraries to be able to compile this sketch.:
 
- https://github.com/jgromes/RadioLib (Radiolib)
+ https://github.com/jgromes/RadioLib (RadioLib)
  
- https://github.com/mikalhart/TinyGPSPlus (tinyGPS++)
- 
- 
- To run this, you need a TTGO T-Deer board or:
+ https://github.com/mikalhart/TinyGPSPlus (TinyGPS++)
+
+[KW]
+This program is now refactored into a proper C++ structure using guarded header files and cpp files (apart from TBTracker.ino is 
+still named .ino to maintain Arduino IDE compatibility) , this allows it to be compiled in both Arduino IDE and other C++ compilers 
+like PlatformIO, as well as significantly speeding up development time as the whole program does not need recompiling after every change.
+
+To run this, you need a TTGO T-Deer board or:
  *  1 x Arduino Mini - 3.3v (or compatible Arduino board)
  *  1 x SX1278 LoRa chip (or compatible LoRa chip. Basically it will work with all sx127x series chips)
  *  1 x ATGM336H, BN220 GPS (9600 Baud) or any UBlox or compatible GPS device like a NEO6 or NEO8. I recommend the ATGM336H GPS module.
  
- Connect the T-Deer as an Arduino Mini to the Arduino IDE.
- Many parameters are user adjustable in settings.h
+Connect the T-Deer as an Arduino Mini to the Arduino IDE.
+Many parameters are user adjustable in settings.h
  
- Have fun,
- 
- Roel.
+Have fun,
+
+Roel.

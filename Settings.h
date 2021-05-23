@@ -1,3 +1,10 @@
+// Settings.h
+
+#ifndef SETTINGS_H
+#define SETTINGS_H
+
+#include <Arduino.h>
+
 /************************************************************************
 * PIN NUMBERS for SX1278
 *  
@@ -75,7 +82,7 @@
 // 4 = Test mode not for normal use.
 // 5 = (normal for calling mode)   Explicit mode, Error coding 4:8, Bandwidth 41.7kHz, SF 11, Low data rate optimize off
 // Default UKHAS tracker mode only 0,1,2 and 3 are implemented in this code
-#define LORA_MODE 2  // Mode 2 is usuually used for simple telemetry data
+#define LORA_MODE 2  // Mode 2 is usually used for simple telemetry data
 #define LORA_REPEATS 1 // number of LoRa transmits during a cycle
 
 /***********************************************************************************
@@ -106,8 +113,14 @@
 // #define POWER_PIN5     -1
 
 
+/***********************************************************************************
+* DEBUG Mode SETTINGS
+*  
+* Change if needed
+************************************************************************************/
 #define DEVMODE // Development mode. Uncomment to enable for debugging and see debug info on the serial monitor
-                              
+static const uint32_t DBGBaud = 9600;
+
 /***********************************************************************************
 * GPS SETTINGS
 *  
@@ -126,7 +139,7 @@ static const uint32_t GPSBaud = 9600;
 * Change if needed
 * 
 *  You can connect an external voltage directly to the EXTERNALVOLTAGE_PIN as long as the the pin is rated for that voltage
-*  Alteratively, you can use a voltage divider so you can connect a higher voltage, but then you have to calculate the DIVIDER_RATIO yourself
+*  Alternatively, you can use a voltage divider so you can connect a higher voltage, but then you have to calculate the DIVIDER_RATIO yourself
 *  
 *  Voltage divider schema:
 *  
@@ -159,3 +172,5 @@ static const uint32_t GPSBaud = 9600;
 * Uncomment this if you want to reset the counters for LoRa and RTTY set back to 0.
 ************************************************************************************/
 // #define RESET_TRANS_COUNTERS 
+
+#endif

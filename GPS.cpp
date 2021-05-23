@@ -1,8 +1,16 @@
-#include <TinyGPS++.h>
-#include <SoftwareSerial.h>
+// GPS.cpp
 
-#define PEDESTRIAN 3
-#define AIRBORNE 6 
+/***********************************************************************************
+* #includes
+*
+* #include user defined headers, followed by 3rd party library headers, then standard 
+* library headers, with the headers in each section sorted alphabetically.
+************************************************************************************/
+#include "GPS.h"
+#include "TBTracker.h"
+#include "Settings.h"
+
+#include <TinyGPS++.h>
 
 
 // The TinyGPS++ object
@@ -18,7 +26,7 @@ void CheckGPS()
 
 /*********************************************************************************************************************************/
 // This custom version of delay() ensures that the gps object is being "fed".
-static void smartDelay(unsigned long ms)
+void smartDelay(unsigned long ms)
 {
   unsigned long start = millis();
   do 
@@ -29,9 +37,9 @@ static void smartDelay(unsigned long ms)
 }
 
 /*********************************************************************************************************************************/
-static void processGPSData()
+void processGPSData()
 {
-  byte DesiredMode;
+  uint8_t DesiredMode;
   
   // Number of Satellites
   if (gps.satellites.isValid())
@@ -113,17 +121,6 @@ void SendUBX(unsigned char *Message, int Length)
 
 
 /*********************************************************************************************************************************/
-void setDesiredMode(byte aDesiredMode)
-{
-  if (aDesiredMode == PEDESTRIAN)
-    setGPS_DynamicModel3();
-  else if (aDesiredMode == AIRBORNE)
-    setGPS_DynamicModel6();
- 
-  UGPS.FlightMode = aDesiredMode;
-}
-
-/*********************************************************************************************************************************/
 // Pedestrian mode
 void setGPS_DynamicModel3()
 {
@@ -159,4 +156,15 @@ void setGPS_DynamicModel6()
 #if defined(DEVMODE)  
   Serial.println("Done");
 #endif
+}
+
+/*********************************************************************************************************************************/
+void setDesiredMode(uint8_t aDesiredMode)
+{
+  if (aDesiredMode == PEDESTRIAN)
+    setGPS_DynamicModel3();
+  else if (aDesiredMode == AIRBORNE)
+    setGPS_DynamicModel6();
+ 
+  UGPS.FlightMode = aDesiredMode;
 }
