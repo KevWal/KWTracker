@@ -1,10 +1,3 @@
-// Settings.h
-
-#ifndef SETTINGS_H
-#define SETTINGS_H
-
-#include <Arduino.h>
-
 /************************************************************************
 * PIN NUMBERS for SX1278
 *  
@@ -15,7 +8,6 @@
 #define PIN_BUSY  -1  // Not used in this sketch for sx1278
 #define PIN_RESET -1  // Not used in this sketch for sx1278
 #define PIN_DIO1  -1  // Not used in this sketch for sx1278
-
 
 /***********************************************************************************
 * DEFAULT FSK SETTINGS
@@ -31,17 +23,17 @@
 #define FSK_ENABLEOOK false
 #define FSK_DATASHAPING 0.5
 
-
 /***********************************************************************************
 * RTTY SETTINGS
 *  
 * Change when needed
+* Default RTTY setting is: 7,N,2 at 100 Baud.
 ************************************************************************************/
 #define RTTY_ENABLED true            // Set to true if you want RTTY transmissions (You can use Both LoRa and RTTY or only one of the two) 
 #define RTTY_PAYLOAD_ID  "RTTY_ID"   // Payload ID for RTTY protocol
 #define RTTY_FREQUENCY  434.113      // Can be different from LoRa frequency
 #define RTTY_SHIFT 610
-#define RTTY_BAUD 150                // Baud rate
+#define RTTY_BAUD 100                // Baud rate
 #define RTTY_STOPBITS 2
 #define RTTY_PREFIX "$$$$$"          
  
@@ -50,6 +42,7 @@
 #define RTTY_ASCII_EXTENDED 1        // 8 data bits
 #define RTTY_ITA2  2                 // Baudot 
 
+
 #define RTTY_REPEATS 1 // number of RTTY transmits during a cycle
 
 // Idle carrier in ms before sending actual RTTY string. 
@@ -57,7 +50,6 @@
 // Set to a high value (i.e. 5000 or even higher) if you have a hard time to tune the signal
 #define RTTY_IDLE_TIME 2500          
  
-
 /***********************************************************************************
 * LORA SETTINGS
 *  
@@ -66,9 +58,9 @@
 #define LORA_ENABLED true            // Set to true if you want LoRa transmissions (You can use Both LoRa and RTTY or only one of the two)
 #define LORA_PAYLOAD_ID  "LORA-ID"   // Payload ID for LoRa protocol
 #define LORA_FREQUENCY  434.562      // Can be different from RTTY frequency
-#define LORA_BANDWIDTH 125.0
-#define LORA_SPREADFACTOR 9
-#define LORA_CODERATE 7
+#define LORA_BANDWIDTH 125.0         // Do not change, change LORA_MODE instead
+#define LORA_SPREADFACTOR 9          // Do not change, change LORA_MODE instead
+#define LORA_CODERATE 7              // Do not change, change LORA_MODE instead
 #define LORA_PREFIX "$$"             // Some older LoRa software does not accept a prefix of more than 2x "$"
 #define LORA_SYNCWORD 0x12           // for sx1278
 // #define LORA_SYNCWORD 0x1424      // for sx1262 (currently not supported)
@@ -87,7 +79,6 @@
 #define LORA_MODE 2  // Mode 2 is usually used for simple telemetry data
 #define LORA_REPEATS 1 // number of LoRa transmits during a cycle
 
-
 /***********************************************************************************
 * TRANSMISSIONS SETTINGS
 *  
@@ -97,7 +88,7 @@
 
 // Allow time for the GPS to re-acquire a fix when using sleep mode!
 // Currently deep sleep is only enabled for ATMEGA328
-#define USE_DEEP_SLEEP true     // Put the ATMEGA328 chip to deep sleep while not transmitting. set to true or false.
+#define USE_DEEP_SLEEP false    // Put the ATMEGA328 chip to deep sleep while not transmitting. set to true or false.
                                 // The tracker will only go to sleep if there are more than 4 satellites visible   
 #define TIME_TO_SLEEP  15       // This is the number in seconds out of TX_LOOP_TIME that the CPU is in sleep. Only valid when USE_DEEP_SLEEP = true
 
@@ -116,33 +107,20 @@
 // #define POWER_PIN5     -1
 
 
-/***********************************************************************************
-* DEBUG Mode SETTINGS
-*  
-* Development mode. Uncomment #define DEVMODE to enable for debugging and see debug 
-* info on the serial output defined by SERIALDBG
-* 
-* Change if needed
-************************************************************************************/
-#define DEVMODE
-#define SERIALDBG Serial1
-#define DBGBAUD 9600
-
-
+#define DEVMODE // Development mode. Uncomment to enable for debugging and see debug info on the serial monitor
+                // Comment this out if you experience out-of-memory errors.
+                              
 /***********************************************************************************
 * GPS SETTINGS
 *  
-* #define SerialGPS as the correct Hardware Serial Port for the GPS, or comment it out 
-* to use Software Serial on the GPS RX and GPS TX ports defined below.
-* White: 7, Green: 8
-* 
 * Change if needed
 ************************************************************************************/
-#define SERIALGPS Serial
-//#define GPSRX 7
-//#define GPSTX 8
-#define GPSBAUD 9600
-
+// GPS Serial device
+// We use SoftwareSerial so these pin numbers are basically free to choose
+// Parameters for the GPS
+// White: 7, green: 8
+static const int Rx = 7, Tx = 8;
+static const uint32_t GPSBaud = 9600;
 
 /***********************************************************************************
 * SENSOR SETTINGS
@@ -150,7 +128,7 @@
 * Change if needed
 * 
 *  You can connect an external voltage directly to the EXTERNALVOLTAGE_PIN as long as the the pin is rated for that voltage
-*  Alternatively, you can use a voltage divider so you can connect a higher voltage, but then you have to calculate the DIVIDER_RATIO yourself
+*  Alteratively, you can use a voltage divider so you can connect a higher voltage, but then you have to calculate the DIVIDER_RATIO yourself
 *  
 *  Voltage divider schema:
 *  
@@ -177,12 +155,9 @@
 #define SAMPLE_RES 1024            // 1024 for Uno, Mini, Nano, Mega, Micro. Leonardo. 4096 for Zero, Due and MKR  
 #define DIVIDER_RATIO 1.00         // Leave at 1.00 when using no voltage divider. Set to (R1+R2)/R2 when using a voltage divider.
 
-
 /***********************************************************************************
 * TELEMETRY COUNTERS
 *  
 * Uncomment this if you want to reset the counters for LoRa and RTTY set back to 0.
 ************************************************************************************/
-// #define RESET_TRANS_COUNTERS 
-
-#endif
+// #define RESET_TRANS_COUNTERS

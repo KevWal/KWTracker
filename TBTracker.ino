@@ -159,7 +159,7 @@ void loop()
        if (USE_DEEP_SLEEP && UGPS.Satellites > 4)
        {
 #if defined(DEVMODE)        
-         SERIALDBG.println("Going to sleep...");
+         SERIALDBG.println("Start sleep..");
 #endif
          // Set all defined power pins to low
          disable_PowerPins();

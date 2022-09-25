@@ -1,5 +1,5 @@
 # TBTracker
-RTTY and LoRa High Altitude Balloon Tracker for Arduino and SX127x (or Hope RFM9x).
+Plug and Play RTTY and LoRa High Altitude Balloon Tracker for Arduino and SX127x (or Hope RFM9x).
 
 TBTracker is a sketch for a tracker for high altitude weather balloons. It will send telemetry data in RTTY and LoRa format.
 It is designed to send telemetry data in the correct format for https://tracker.habhub.org/
@@ -32,11 +32,16 @@ like PlatformIO, as well as significantly speeding up development time as the wh
 To run this, you need a TTGO T-Deer board or:
  *  1 x Arduino Mini - 3.3v (or compatible Arduino board)
  *  1 x SX1278 LoRa chip (or compatible LoRa chip. Basically it will work with all sx127x series chips)
- *  1 x ATGM336H, BN220 GPS (9600 Baud) or any UBlox or compatible GPS device like a NEO6 or NEO8. I recommend the ATGM336H GPS module.
+ *  1 x ATGM336H, BN220 GPS (9600 Baud) or any UBlox or compatible GPS device like a NEO6 or NEO8. I recommend the ATGM336H GPS module. 
+
+Note that currently setting different flightmodes in uBlox GPS modules is not supported. This could cause GPS failures above 18km when using uBlox GPS modules. I recommend using the ATGM336H GPS modules.
  
 Connect the T-Deer as an Arduino Mini to the Arduino IDE.
 Many parameters are user adjustable in settings.h
  
+The Arduino Pro mini has a rather small memory capacity. If you run into memory issues, consider disabling RTTY or LORA in the settings.h file. 
+Also disabling DEVMODE in settings.h will free up a lot of memory at the cost of no serial output. 
+ 
 Have fun,
-
+ 
 Roel.
