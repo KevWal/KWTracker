@@ -46,11 +46,9 @@
 //===============================================================================
 void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPrefix)
 {
-   char Sen[5];
    int Count, i, j;
-   unsigned char c;
-   unsigned int CRC, xPolynomial;
-   char LatitudeString[16], LongitudeString[16], CRCString[8];
+   unsigned int CRC;
+   char LatitudeString[16], LongitudeString[16];
    char InternalTemp[10];
    char BattVoltage[10];
    char ExtVoltage[10];
@@ -85,7 +83,6 @@ void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPr
 
    // Calc CRC
    CRC = 0xffff;           // Seed
-   xPolynomial = 0x1021;
    
    for (i = strlen(aPrefix); i < Count; i++)
    {   // For speed, repeat calculation instead of looping for each bit
@@ -113,7 +110,7 @@ char Hex(char Character)
 {
   char HexTable[] = "0123456789ABCDEF";
   
-  return HexTable[Character];
+  return HexTable[(unsigned char)Character];
 }
 
 

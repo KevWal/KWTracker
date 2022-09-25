@@ -45,19 +45,16 @@ void SetupRTTY()
                      RTTYSettings.Encoding,
                      RTTYSettings.StopBits  );
                      
-  if(state == ERR_NONE) 
-  {
 #if defined(DEVMODE)            
+  if(state == ERR_NONE) 
+  {          
     SERIALDBG.println(F("success!"));
-#endif
   } else 
   {
-#if defined(DEVMODE)
     SERIALDBG.print(F("failed, code "));
     SERIALDBG.println(state);
-#endif
-    while(true);
   }
+#endif
 }
 
 
@@ -95,20 +92,17 @@ void SetupFSK()
                                FSKSettings.EnableOOK);
 
 
+#if defined(DEVMODE) 
   if(state == ERR_NONE) 
-  {
-#if defined(DEVMODE)    
+  {   
     SERIALDBG.println(F("success!"));
-#endif
   } 
   else 
   {
-#if defined(DEVMODE)    
     SERIALDBG.print(F("failed, code "));
     SERIALDBG.println(state);
-#endif
-    while(true);
   }
+#endif
 }
 
 
@@ -181,20 +175,17 @@ void SetupLoRa()
     LoRaSettings.Gain
   );
   
+#if defined(DEVMODE)
   if(state == ERR_NONE) 
-  {
-#if defined(DEVMODE)    
-    SERIALDBG.println(F("success!"));
-#endif    
+  {    
+    SERIALDBG.println(F("success!"));  
   } 
   else 
   {
-#if defined(DEVMODE)    
     SERIALDBG.print(F("failed, code "));
     SERIALDBG.println(state);
-#endif    
-    while(true);
   }
+#endif
 }
 
 
@@ -223,38 +214,63 @@ void SetupRadio()
 //===============================================================================
 void sendRTTY(String TxLine)
 {
-   // Disable the GPS serial temporarily 
-   SERIALGPS.end();
+  // Disable the GPS serial temporarily 
+  SERIALGPS.end();
+
+  SetupRTTY();
    
-   SetupRTTY();
+  // Send only idle carrier to let people get their tuning right
+  rtty.idle();     
+  delay(RTTY_IDLE_TIME);
    
-   // Send only idle carrier to let people get their tuning right
-   rtty.idle();     
-   delay(RTTY_IDLE_TIME);
-   
-   // Send the string 
 #if defined(DEVMODE)   
-   SERIALDBG.print(F("Sending RTTY: "));
-   SERIALDBG.println(TxLine);
+  SERIALDBG.print(F("Sending RTTY: "));
+  SERIALDBG.println(TxLine);
 #endif   
    
-   int state = rtty.println(TxLine); 
+  // Send the string 
+  int state = rtty.println(TxLine); 
 
-   // Enable the GPS again.  
-   SERIALGPS.begin(GPSBAUD);
+#if defined(DEVMODE)
+  if(state == ERR_NONE) 
+  {    
+    SERIALDBG.println(F("success!"));  
+  } 
+  else 
+  {
+    SERIALDBG.print(F("failed, code "));
+    SERIALDBG.println(state);
+  }
+#endif
+
+  // Enable the GPS again.  
+  SERIALGPS.begin(GPSBAUD);
 }
 
 
 //===============================================================================
 void sendLoRa(String TxLine)
 {
-   SetupLoRa();
+  SetupLoRa();
 
 #if defined(DEVMODE)      
-   SERIALDBG.print(F("Sending LoRa: "));
-   SERIALDBG.println(TxLine);
+  SERIALDBG.print(F("Sending LoRa: "));
+  SERIALDBG.println(TxLine);
 #endif
    
-   // Send the string
-   int state = radio.transmit(TxLine); 
+  // Send the string
+  int state = radio.transmit(TxLine); 
+
+#if defined(DEVMODE)
+  if(state == ERR_NONE) 
+  {    
+    SERIALDBG.println(F("success!"));  
+  } 
+  else 
+  {
+    SERIALDBG.print(F("failed, code "));
+    SERIALDBG.println(state);
+  }
+#endif
+
 }
