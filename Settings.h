@@ -178,6 +178,51 @@
 
 
 /***********************************************************************************
+* SONDEHUB EXTRA FIELDS SETTINGS
+*  
+* For displaying extra fields at amateur.sondehub.org, we need to define which fields are
+* in the telemetry after the lat, lon, alt fields
+* This can be done by adding a specific metadata string after the last telemetry field
+* This is supported by the various receivers made by Dave Akerman,
+* See: https://www.daveakerman.com/?page_id=2410
+* 
+* 0  PayloadID
+* 1 Counter
+* 2 Time
+* 3 Latitude
+* 4 Longitude
+* 5 Altitude
+* 6 Satellites
+* 7 Speed
+* 8 Heading
+* 9 Battery Voltage
+* A InternalTemperature
+* B ExternalTemperature
+* C PredictedLatitude
+* D PredictedLongitude
+* E CutdownStatus
+* F LastPacketSNR
+* G LastPacketRSSI
+* H ReceivedCommandCount
+* I-N ExtraFields
+* O MaximumAltitude
+* P Battery Current
+* Q External Temperature 2
+* R Pressure
+* S Humidity
+* T CDA
+* U Predicted Landing Speed
+* V Time Till Landing
+* W Last Command Received
+* 
+* Our string would be: "0123456A9I"
+* You can disable FIELDSTR by undefining it, if you want.
+************************************************************************************/
+#define USE_FIELDSTR
+#define FIELDSTR "0123456A9I"
+
+
+/***********************************************************************************
 * SENSOR SETTINGS
 *  
 * Change if needed

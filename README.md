@@ -2,7 +2,7 @@
 Plug and Play RTTY and LoRa High Altitude Balloon Tracker for Arduino and SX127x (or Hope RFM9x).
 
 TBTracker is a sketch for a tracker for high altitude weather balloons. It will send telemetry data in RTTY and LoRa format.
-It is designed to send telemetry data in the correct format for https://tracker.habhub.org/
+It is designed to send telemetry data in the correct format for https://tracker.habhub.org/ and/or https://amateur.sondehub.org
 
 It can send data in RTTY or LoRa format on different frequencies and with different callsigns.
 
@@ -11,6 +11,8 @@ Currently it supports:
 - Longitude
 - Latitude
 - Altitude
+
+Some extra fields can be transmitted as well but not all are visible on Sondehub and Habhub (see the settings file in the code):
 - Number of satellites visible
 - Internal temperature
 - Internal voltage
@@ -25,7 +27,7 @@ You will need two extra Arduino libraries to be able to compile this sketch.:
  https://github.com/mikalhart/TinyGPSPlus (TinyGPS++)
 
 [KW]
-This program is now refactored into a proper C++ structure using guarded header files and cpp files (apart from TBTracker.ino is 
+This program is now refactored into a C++ structure using guarded header files and cpp files (apart from TBTracker.ino is 
 still named .ino to maintain Arduino IDE compatibility) , this allows it to be compiled in both Arduino IDE and other C++ compilers 
 like PlatformIO, as well as significantly speeding up development time as the whole program does not need recompiling after every change.
 
@@ -39,8 +41,7 @@ Note that currently setting different flightmodes in uBlox GPS modules is not su
 Connect the T-Deer as an Arduino Mini to the Arduino IDE.
 Many parameters are user adjustable in settings.h
  
-The Arduino Pro mini has a rather small memory capacity. If you run into memory issues, consider disabling RTTY or LORA in the settings.h file. 
-Also disabling DEVMODE in settings.h will free up a lot of memory at the cost of no serial output. 
+The Arduino Pro mini has a rather small memory capacity. If you run into memory issues, consider disabling RTTY or LORA in the settings.h file. Also disabling DEVMODE in settings.h will free up a lot of memory at the cost of no serial output. 
  
 Have fun,
  

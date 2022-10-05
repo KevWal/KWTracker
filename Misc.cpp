@@ -1,3 +1,4 @@
+<<<<<<< HEAD:Misc.cpp
 // Misc.cpp
 
 /***********************************************************************************
@@ -67,9 +68,12 @@ void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPr
   dtostrf(UGPS.Latitude, 7, 5, LatitudeString);
   dtostrf(UGPS.Longitude, 7, 5, LongitudeString);   
    
-  sprintf(Sentence,
-            "%s%s,%ld,%02d:%02d:%02d,%s,%s,%ld,%u,%s,%s,%s",
-            aPrefix,
+#if defined(USE_FIELDSTR)               
+   sprintf(Sentence,
+            "%s%s,%ld,%02d:%02d:%02d,%s,%s,%ld,%u,%s,%s,%s,%s",
+#else
+             "%s%s,%ld,%02d:%02d:%02d,%s,%s,%ld,%u,%s,%s,%s",
+#endif
             PayloadID,
             aCounter,
             UGPS.Hours, UGPS.Minutes, UGPS.Seconds,   
@@ -79,7 +83,12 @@ void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPr
             UGPS.Satellites,
             InternalTemp,
             BattVoltage,
-            ExtVoltage);
+            ExtVoltage
+#if defined(USE_FIELDSTR)            
+            ,
+			FIELDSTR
+#endif
+			);
 
   Count = strlen(Sentence);
 
