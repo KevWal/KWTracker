@@ -28,24 +28,33 @@ void CheckGPS()
 // This custom version of delay() ensures that the gps object is being "fed".
 void smartDelay(unsigned long ms)
 {
+  DBGPRNTST(F("Reading GPS ... "));
   unsigned long start = millis();
   do 
   {
-    while (SERIALGPS.available())
+    while (SERIALGPS.available()) 
+    {
       gps.encode(SERIALGPS.read());
+    }
   } while (millis() - start < ms);
+  DBGPRNT(gps.charsProcessed()); DBGPRNT(F(" chars read, ")); DBGPRNT(gps.passedChecksum()); DBGPRNTLN(F(" valid sentances."));
 }
 
 /*********************************************************************************************************************************/
 void processGPSData()
 {
   uint8_t DesiredMode;
+
+  DBGPRNTST(F("Processing GPS ... "));
   
   // Number of Satellites
   if (gps.satellites.isValid())
     UGPS.Satellites = gps.satellites.value();
   else
+  {
     UGPS.Satellites = 0;
+    DBGPRNT(F("Sats not valid, "));
+  }
 
  // Time
  if (gps.time.isValid())
@@ -59,6 +68,7 @@ void processGPSData()
     UGPS.Hours = 0;
     UGPS.Minutes = 0;
     UGPS.Seconds = 0;
+    DBGPRNT(F("Time not valid, "));
  }
 
  // Position
@@ -71,13 +81,17 @@ void processGPSData()
  {
    UGPS.Longitude = 0;
    UGPS.Latitude = 0;
+   DBGPRNT(F("Location not valid, "));
  }
 
  // Altitude
  if (gps.altitude.isValid())
     UGPS.Altitude = gps.altitude.meters();
  else
-    UGPS.Altitude = 0;    
+ {
+   UGPS.Altitude = 0;
+   DBGPRNT(F("Alt not valid, "));
+ }
 
  if (UGPS.Altitude < 0)
    UGPS.Altitude = 0;    
@@ -91,29 +105,22 @@ void processGPSData()
  if (UGPS.FlightMode != DesiredMode)
    setDesiredMode(DesiredMode);
     
+  DBGPRNTLN(F("done."));
 }
 
 /*********************************************************************************************************************************/
 void printGPSData()
 {
-#if defined(DEVMODE)
-  SERIALDBG.print("         Time: "); SERIALDBG.print(UGPS.Hours); SERIALDBG.print(":"); SERIALDBG.print(UGPS.Minutes); SERIALDBG.print(":"); SERIALDBG.println(UGPS.Seconds);
-  SERIALDBG.print("     Latitude: "); SERIALDBG.println(UGPS.Latitude, 6);
-  SERIALDBG.print("    Longitude: "); SERIALDBG.println(UGPS.Longitude, 6);
-  SERIALDBG.print(" Altitude (m): "); SERIALDBG.println(UGPS.Altitude);
-  SERIALDBG.print("   Satellites: "); SERIALDBG.println(UGPS.Satellites);
-  SERIALDBG.println();
-  SERIALDBG.println("-------------------------");
-#endif
+  DBGPRNTST(UGPS.Hours); DBGPRNT(":"); DBGPRNT(UGPS.Minutes); DBGPRNT(":"); DBGPRNT(UGPS.Seconds);
+  DBGPRNT(" "); DBGPRNT(UGPS.Latitude, 6); DBGPRNT(" "); DBGPRNT(UGPS.Longitude, 6);
+  DBGPRNT(" "); DBGPRNT(UGPS.Altitude); DBGPRNT(" "); DBGPRNTLN(UGPS.Satellites);
 }
 
 
 /*********************************************************************************************************************************/
 void SendUBX(unsigned char *Message, int Length)
-{  
-  int i;
-  
-  for (i=0; i<Length; i++)
+{   
+  for (int i=0; i<Length; i++)
   {
     SERIALGPS.write(Message[i]);
   }
@@ -130,13 +137,9 @@ void setGPS_DynamicModel3()
      0x00, 0xFA, 0x00, 0x64, 0x00, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, 0x10, 0x27, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4A, 0x75
    };  
 
-#if defined(DEVMODE)
-  SERIALDBG.print("Setting pedestrian mode...");
-#endif
+  DBGPRNTST(F("Setting pedestrian mode ... "));
   SendUBX(setNav, sizeof(setNav));
-#if defined(DEVMODE)
-  SERIALDBG.println("Done");
-#endif
+  DBGPRNTLN(F("Done"));
 }
 
 /*********************************************************************************************************************************/
@@ -149,13 +152,9 @@ void setGPS_DynamicModel6()
     0x00, 0xFA, 0x00, 0x64, 0x00, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, 0x10, 0x27, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4D, 0xDB
   };
 
-#if defined(DEVMODE)  
-  SERIALDBG.print("Setting airborne mode...");
-#endif
+  DBGPRNTST(F("Setting airborne mode ... "));
   SendUBX(setNav, sizeof(setNav));
-#if defined(DEVMODE)  
-  SERIALDBG.println("Done");
-#endif
+  DBGPRNTLN(F("Done"));
 }
 
 /*********************************************************************************************************************************/

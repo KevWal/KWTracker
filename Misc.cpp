@@ -16,11 +16,7 @@
 * The function CreateTXLine generates two payload sentences to transmit. One
 * for RTTY and one for LoRa. These sentences are compatible with the habhub tracker.
 * 
-* Run the software and decode your payload sentences. Then go to 
-* http://habitat.habhub.org/genpayload/ and register your payload there by
-* generating a payload configuration document. You will need the generated sentences
-* to create a payload configuration document. When you do that, other people will be
-* able to see your tracker on the map at https://tracker.habhub.org
+* Run the software and decode your payload sentences. 
 *
 * Sample of a RTTY payload sentence this software will generate:
 * 
@@ -53,19 +49,25 @@ void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPr
    char BattVoltage[10];
    char ExtVoltage[10];
 
-   // Get the internal chip temperature
-   dtostrf(ReadTemp(), 3, 1, InternalTemp);
+#ifdef ATMEGA1284P // ATMEGA1284P does not have an internal temperature sensor
+  dtostrf(0.0, 3, 1, InternalTemp);
+#else // Get the internal chip temperature
+  dtostrf(ReadTemp(), 3, 1, InternalTemp);
+  DBGPRNTST(F("InternalTemp: ")); DBGPRNTLN(InternalTemp);
+#endif
 
-   // Get the battery voltage
-   dtostrf(ReadVCC(), 4, 2,BattVoltage);
+  // Get the battery voltage
+  dtostrf(ReadVCC(), 4, 2, BattVoltage);
+  DBGPRNTST(F("BattVoltage: ")); DBGPRNTLN(BattVoltage);
 
-   // Get the external voltage
-   dtostrf(ReadExternalVoltage(), 4, 2,ExtVoltage);
+  // Get the external voltage
+  dtostrf(ReadExternalVoltage(), 4, 2, ExtVoltage);
+  DBGPRNTST(F("ExtVoltage: ")); DBGPRNTLN(ExtVoltage);
          
-   dtostrf(UGPS.Latitude, 7, 5, LatitudeString);
-   dtostrf(UGPS.Longitude, 7, 5, LongitudeString);   
+  dtostrf(UGPS.Latitude, 7, 5, LatitudeString);
+  dtostrf(UGPS.Longitude, 7, 5, LongitudeString);   
    
-   sprintf(Sentence,
+  sprintf(Sentence,
             "%s%s,%ld,%02d:%02d:%02d,%s,%s,%ld,%u,%s,%s,%s",
             aPrefix,
             PayloadID,
@@ -79,30 +81,32 @@ void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPr
             BattVoltage,
             ExtVoltage);
 
-   Count = strlen(Sentence);
+  Count = strlen(Sentence);
 
-   // Calc CRC
-   CRC = 0xffff;           // Seed
+  // Calc CRC
+  CRC = 0xffff;           // Seed
    
-   for (i = strlen(aPrefix); i < Count; i++)
-   {   // For speed, repeat calculation instead of looping for each bit
-      CRC ^= (((unsigned int)Sentence[i]) << 8);
-      for (j=0; j<8; j++)
-      {
-          if (CRC & 0x8000)
-              CRC = (CRC << 1) ^ 0x1021;
-          else
-              CRC <<= 1;
-      }
-   }
+  for (i = strlen(aPrefix); i < Count; i++)
+  {   // For speed, repeat calculation instead of looping for each bit
+    CRC ^= (((unsigned int)Sentence[i]) << 8);
+    for (j=0; j<8; j++)
+    {
+      if (CRC & 0x8000)
+        CRC = (CRC << 1) ^ 0x1021;
+      else
+        CRC <<= 1;
+    }
+  }
 
-   Sentence[Count++] = '*';
-   Sentence[Count++] = Hex((CRC >> 12) & 15);
-   Sentence[Count++] = Hex((CRC >> 8) & 15);
-   Sentence[Count++] = Hex((CRC >> 4) & 15);
-   Sentence[Count++] = Hex(CRC & 15);
-   Sentence[Count++] = '\n';  
-   Sentence[Count++] = '\0';
+  Sentence[Count++] = '*';
+  Sentence[Count++] = Hex((CRC >> 12) & 15);
+  Sentence[Count++] = Hex((CRC >> 8) & 15);
+  Sentence[Count++] = Hex((CRC >> 4) & 15);
+  Sentence[Count++] = Hex(CRC & 15);
+  Sentence[Count++] = '\n';  
+  Sentence[Count++] = '\0';
+
+  DBGPRNTST(F("TX Line: ")); DBGPRNT(Sentence);
 }
 
 //===============================================================================
@@ -149,7 +153,7 @@ long EEPROMReadlong(long address)
 
 //===============================================================================
 //This function will reset the transmission counters to 0.
-void Reset_Transmission_Counters()
+void resetTransmissionCounters()
 {
    EEPROMWritelong(0x00,0);
    EEPROMWritelong(0x04,0);

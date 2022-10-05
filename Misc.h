@@ -16,7 +16,7 @@ void EEPROMWritelong(int address, long value);
 
 long EEPROMReadlong(long address);
 
-void Reset_Transmission_Counters();
+void resetTransmissionCounters();
 
 extern char Sentence[SENTENCE_LENGTH];
 extern TGPS UGPS;
