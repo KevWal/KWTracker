@@ -8,9 +8,11 @@
 
 #include <Arduino.h>
 
-void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPrefix);
+void createRTTYTXLine(const char *PayloadID, unsigned long aCounter, const char *aPrefix);
 
-char Hex(char Character);
+void createLoRaTXLine(const char *PayloadID, unsigned long aCounter, const char *aPrefix);
+
+char hexConvert(char Character);
 
 void EEPROMWritelong(int address, long value);
 

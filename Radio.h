@@ -6,15 +6,15 @@
 #include "Settings.h"
 #include <Arduino.h>
 
-void SetupRTTY();
+void setupRTTY();
 
-void SetupFSK();
+void setupFSK();
 
-void SetupLoRa();
+void setupLoRa();
 
-void ResetRadio();
+void resetRadio();
 
-void SetupRadio();
+void setupRadio();
 
 void sendRTTY(String TxLine);
 

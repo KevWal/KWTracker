@@ -18,7 +18,7 @@
 int teller = 0;
 
 //===============================================================================
-void setup_Sleep(void)
+void setupSleep(void)
 {  
   // Setup the watchdog timer to run an interrupt which
   // wakes the Arduino from sleep every 1 second.
@@ -54,9 +54,9 @@ void setup_Sleep(void)
 
 //===============================================================================
 // Put the Arduino to sleep.
-void my_Sleep()
+void mySleep()
 {
-  setup_Sleep();
+  setupSleep();
   // Set sleep to full power down.  Only external interrupts or 
   // the watchdog timer can wake the CPU!
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
@@ -87,7 +87,7 @@ ISR(WDT_vect)
 
 //===============================================================================
 // Setup the defined power pins for output
-void setup_PowerPins()
+void setupPowerPins()
 {
 #if (POWER_PIN1 > 0)
   pinMode(POWER_PIN1, OUTPUT);
@@ -108,12 +108,14 @@ void setup_PowerPins()
 #if (POWER_PIN5 > 0)
   pinMode(POWER_PIN5, OUTPUT);
 #endif
+
+  DBGPRNTSTLN(F("Powerpins setup complete."));
 }
 
 
 //===============================================================================
 // Set the defined power pins HIGH
-void enable_PowerPins()
+void enablePowerPins()
 {
 #if (POWER_PIN1 > 0)
     digitalWrite(POWER_PIN1, HIGH);
@@ -134,12 +136,14 @@ void enable_PowerPins()
 #if (POWER_PIN5 > 0)
     digitalWrite(POWER_PIN5, HIGH);
 #endif
+
+  DBGPRNTSTLN(F("GPS powered on."));
 }
 
 
 //===============================================================================
 // Set the defined power pins LOW
-void disable_PowerPins()
+void disablePowerPins()
 {  
   // Only disable the power pins when there it is safe to do so
 #if (POWER_PIN1 > 0)
@@ -160,5 +164,7 @@ void disable_PowerPins()
 
 #if (POWER_PIN5 > 0)
     digitalWrite(POWER_PIN5, LOW);
-#endif    
+#endif
+
+  DBGPRNTSTLN(F("GPS powered off."));
 }

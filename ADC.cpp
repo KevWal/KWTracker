@@ -13,13 +13,13 @@
 //===============================================================================
 // Read an external voltage from an analog PIN by referencing the 1.1v internal reference  
 // DO NOT CONNECT A HIGHER VOLTAGE THAN THE PIN IS RATED FOR (or use a voltage divider)
-float ReadExternalVoltage()
+float readExternalVoltage()
 {
   float internalV = 0.0;
   float externalV = 0.0;
 
   // Get a reference to compare the external voltage with
-  internalV = ReadVCC();
+  internalV = readVCC();
   
   // Read the external voltage
   if (USE_EXTERNAL_VOLTAGE)
@@ -46,7 +46,7 @@ float ReadExternalVoltage()
 //===============================================================================
 // Read the VCC voltage by referencing the 1.1v internal reference
 // Useful for checking battery voltage.
-float ReadVCC() 
+float readVCC() 
 {
   long result;
   long avgmv = 0;
@@ -74,7 +74,7 @@ float ReadVCC()
 
 //===============================================================================
 // Read the internal chip temperature by referencing the 1.1v internal reference voltage
-float ReadTemp()
+float readTemp()
 {
   unsigned int wADC;
   float t;

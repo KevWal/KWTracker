@@ -70,16 +70,16 @@ void setup()
 #endif
 
   // Setup the Radio
-  ResetRadio(); 
-  SetupRadio();  
+  resetRadio(); 
+  setupRadio();  
 
   // Setup power control
-  setup_PowerPins();
-  enable_PowerPins();
+  setupPowerPins();
+  enablePowerPins();
 
-  // Turn LED On
+  // Setup LED
   pinMode(LED, OUTPUT);
-  digitalWrite(LED, HIGH);
+  digitalWrite(LED, LOW);
 }
 
 
@@ -92,18 +92,18 @@ void loop()
     // Reset the watchdog and the sleep timer
     watchdogActivated = false;
      
-    // Toggle LED
-    digitalWrite(LED, !digitalRead(LED));
-
     // Get data from the GPS
-    smartDelay(1000);
-    CheckGPS(); 
+    smartDelay(2500);
+    checkGPS(); 
 
     unsigned long currentMillis = millis();
-    // Process a non blocking timed loop
+    // Process a non blocking timed Transmit & Sleep loop
     if (currentMillis - previousTX >= ((unsigned long)TX_LOOP_TIME*(unsigned long)1000))
     {
-      // Telemetry loop  
+
+      if (UGPS.Satellites > 5) // If we have a reasonable GPS signal, reduce power usage by turning off GPS before we try and transmit.
+        disablePowerPins();
+
       previousTX = currentMillis;
     
       // Send RTTY
@@ -112,7 +112,7 @@ void loop()
         for (int i=1; i <= RTTY_REPEATS; i++)
         {
           RTTYCounter = EEPROMReadlong(0x00);
-          CreateTXLine(RTTY_PAYLOAD_ID, RTTYCounter++, RTTY_PREFIX);
+          createRTTYTXLine(RTTY_PAYLOAD_ID, RTTYCounter++, RTTY_PREFIX);
           sendRTTY(Sentence); 
           // Write the RTTY counter to EEPROM at address 0x00
           EEPROMWritelong(0x00, RTTYCounter);
@@ -128,7 +128,7 @@ void loop()
         for (int i=1; i <= LORA_REPEATS; i++)
         {
           LoRaCounter = EEPROMReadlong(0x04);
-          CreateTXLine(LORA_PAYLOAD_ID, LoRaCounter++, LORA_PREFIX);
+          createLoRaTXLine(LORA_PAYLOAD_ID, LoRaCounter++, LORA_PREFIX);
           sendLoRa(Sentence); 
           // Write the LoRa counter to EEPROM at address 0x04
           EEPROMWritelong(0x04, LoRaCounter);
@@ -136,22 +136,25 @@ void loop()
       } // if (LORA_ENABLED)
 
       // Go to sleep after transmissions
-      if (USE_DEEP_SLEEP && UGPS.Satellites > 4)
+      if (USE_DEEP_SLEEP)
       {
         DBGPRNTST(F("Start sleep ... "));
-        // Set all defined power pins to low
-        disable_PowerPins();
         sleepIterations = 0;    
         while (sleepIterations < TIME_TO_SLEEP)
         {
-          my_Sleep(); // WDT iterates sleepIterations
+          mySleep(); // WDT iterates sleepIterations
+          DBGPRNT(".>.");
         }
-        DBGPRNTLN(F("awake!"));
-        // Set all defined power pins to high
-        enable_PowerPins();
+        DBGPRNTLN(F(" awake!"));
         previousTX = millis();
-      }
+      } // if (USE_DEEP_SLEEP)
+
+      enablePowerPins();  // Turn GPS power back on
+      UGPS.FlightMode = UNKNOWN; // GPS mode now unknown
+
     } // if (currentMillis - previousTX >= ((unsigned long)TX_LOOP_TIME*(unsigned long)1000))
+
     watchdogActivated = true; 
   } // if (watchdogActivated)
+
 } // loop

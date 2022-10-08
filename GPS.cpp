@@ -17,7 +17,7 @@
 TinyGPSPlus gps;
 
 /*********************************************************************************************************************************/
-void CheckGPS()
+void checkGPS()
 {    
   processGPSData();
   printGPSData();
@@ -30,13 +30,16 @@ void smartDelay(unsigned long ms)
 {
   DBGPRNTST(F("Reading GPS ... "));
   unsigned long start = millis();
+
   do 
   {
-    while (SERIALGPS.available()) 
-    {
-      gps.encode(SERIALGPS.read());
-    }
+    // Read from GPS and feed into TinyGPS++
+    if (SERIALGPS.available()) gps.encode(SERIALGPS.read());
+    // Toggle LED fast if less than 4 sats, slow if more than 4 sats.
+    if (gps.satellites.value() < 5 && gps.altitude.meters() < 1000) digitalWrite(LED, millis()%150>75);
+    if (gps.satellites.value() >= 5 && gps.altitude.meters() < 1000) digitalWrite(LED, millis()%1000>500);
   } while (millis() - start < ms);
+  digitalWrite(LED, LOW);
   DBGPRNT(gps.charsProcessed()); DBGPRNT(F(" chars read, ")); DBGPRNT(gps.passedChecksum()); DBGPRNTLN(F(" valid sentances."));
 }
 
@@ -94,18 +97,19 @@ void processGPSData()
  }
 
  if (UGPS.Altitude < 0)
-   UGPS.Altitude = 0;    
+   UGPS.Altitude = 0;
 
  if (UGPS.Altitude > 1000)
    DesiredMode = AIRBORNE;
  else 
    DesiredMode = PEDESTRIAN;
 
+  DBGPRNTLN(F("done."));
+
  // Set the correct flight mode for high altitude
  if (UGPS.FlightMode != DesiredMode)
-   setDesiredMode(DesiredMode);
-    
-  DBGPRNTLN(F("done."));
+   setDesiredMode(DesiredMode);   
+  
 }
 
 /*********************************************************************************************************************************/
@@ -118,7 +122,7 @@ void printGPSData()
 
 
 /*********************************************************************************************************************************/
-void SendUBX(unsigned char *Message, int Length)
+void sendUBX(unsigned char *Message, int Length)
 {   
   for (int i=0; i<Length; i++)
   {
@@ -138,7 +142,7 @@ void setGPS_DynamicModel3()
    };  
 
   DBGPRNTST(F("Setting pedestrian mode ... "));
-  SendUBX(setNav, sizeof(setNav));
+  sendUBX(setNav, sizeof(setNav));
   DBGPRNTLN(F("Done"));
 }
 
@@ -153,7 +157,7 @@ void setGPS_DynamicModel6()
   };
 
   DBGPRNTST(F("Setting airborne mode ... "));
-  SendUBX(setNav, sizeof(setNav));
+  sendUBX(setNav, sizeof(setNav));
   DBGPRNTLN(F("Done"));
 }
 

@@ -20,10 +20,10 @@ RTTYClient rtty(&radio);
 
 
 //===============================================================================
-void SetupRTTY()
+void setupRTTY()
 {
   // First setup FSK
-  SetupFSK();
+  setupFSK();
 
   DBGPRNTST(F("[RTTY] Initializing ... "));
 
@@ -33,10 +33,10 @@ void SetupRTTY()
 
 
 //===============================================================================
-void SetupFSK()
+void setupFSK()
 {
   // Reset the radio
-  ResetRadio();
+  resetRadio();
 
   // Initialize the SX1278
   DBGPRNTST(F("[SX1278] Initializing ... "));
@@ -48,45 +48,11 @@ void SetupFSK()
 
 //===============================================================================
 // Initialize the SX1278 for LoRa
-void SetupLoRa()
+void setupLoRa()
 {
   DBGPRNTST(F("[LoRA] Initializing ... "));
 
-  ResetRadio();
-
-// HAB LoRa Modes:
-// Num; ImplicitOrExplicit; ErrorCoding; Bandwidth; SpreadingFactor; LowDataRateOptimize; BaudRate; Description
-// 0: EXPLICIT_MODE, ERROR_CODING_4_8, BANDWIDTH_20K8, SPREADING_11, 1,    60, Telemetry - Normal mode for telemetry
-// 1: IMPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_20K8, SPREADING_6,  0,  1400, SSDV - Normal mode for SSDV
-// 2: EXPLICIT_MODE, ERROR_CODING_4_8, BANDWIDTH_62K5, SPREADING_8,  0,  2000, Repeater - Normal mode for repeater network	
-// 3: EXPLICIT_MODE, ERROR_CODING_4_6, BANDWIDTH_250K, SPREADING_7,  0,  8000, Turbo - Normal mode for high speed images in 868MHz band
-// 4: IMPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_250K, SPREADING_6,  0, 16828, TurboX - Fastest mode within IR2030 in 868MHz band
-// 5: EXPLICIT_MODE, ERROR_CODING_4_8, BANDWIDTH_41K7, SPREADING_11, 0,   200, Calling - Calling mode
-// 6: EXPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_20K8, SPREADING_7,  0,  2800, Uplink - Uplink explicit mode (variable length)
-// 7: IMPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_41K7, SPREADING_6,  0,  2800, Uplink - Uplink mode for 868
-// 8: EXPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_20K8, SPREADING_7,  0,   910, Telnet - Telnet-style comms with HAB on 434
-// 9: IMPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_62K5, SPREADING_6,  0,  4500, SSDV Repeater - Fast (SSDV) repeater network
-
-#if LORA_MODE == 0
-  #define LORA_EXPLICITMODE
-  #define LORA_CODERATE 8
-  #define LORA_BW 20.8
-  #define LORA_SPREADFACTOR 11
-  #define LORA_LDRO
-#endif
-
-#if LORA_MODE == 1
-  #define LORA_CODERATE 5
-  #define LORA_BW 20.8
-  #define LORA_SPREADFACTOR 6
-#endif
-
-#if LORA_MODE == 2
-  #define LORA_EXPLICITMODE
-  #define LORA_CODERATE 8
-  #define LORA_BW 62.5
-  #define LORA_SPREADFACTOR 8
-#endif
+  resetRadio();
 
   int16_t state = radio.begin(LORA_FREQUENCY, LORA_BW, LORA_SPREADFACTOR, LORA_CODERATE, LORA_SYNCWORD, LORA_POWER, LORA_PREAMBLELENGTH, LORA_GAIN);
   if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
@@ -94,7 +60,7 @@ void SetupLoRa()
 #ifdef LORA_EXPLICITMODE
   state = radio.explicitHeader();
 #else
-  state = raido.implicitHeader(255);
+  state = radio.implicitHeader(255);
 #endif
   if (state != RADIOLIB_ERR_NONE) { DBGPRNTST(F("Setting Lora Explicit / Implicit mode failed, code: ")); DBGPRNTLN(state); }
 
@@ -110,11 +76,14 @@ void SetupLoRa()
   state = radio.setCurrentLimit(LORA_CURRENTLIMIT);
   if (state != RADIOLIB_ERR_NONE) { DBGPRNTST(F("Setting Lora Current Limit failed, code: ")); DBGPRNTLN(state); }
 #endif
+
+  state = radio.setCRC(true); // Send a LoRa CRC in all UKHAS LoRa Modes
+  if (state != RADIOLIB_ERR_NONE) { DBGPRNTST(F("Setting Lora CRC failed, code: ")); DBGPRNTLN(state); }
 }
 
 
 //===============================================================================
-void ResetRadio()
+void resetRadio()
 {
   // Use for ESP based boards
   /*
@@ -128,11 +97,11 @@ void ResetRadio()
 
 
 //===============================================================================
-void SetupRadio()
+void setupRadio()
 {
   // Setting up the radio
-  SetupRTTY();
-  SetupLoRa();
+  setupRTTY();
+  setupLoRa();
 }
 
 
@@ -142,7 +111,7 @@ void sendRTTY(String TxLine)
   // Disable the GPS serial temporarily 
   SERIALGPS.end();
 
-  SetupRTTY();
+  setupRTTY();
    
   // Send only idle carrier to let people get their tuning right
   rtty.idle();     
@@ -163,7 +132,7 @@ void sendRTTY(String TxLine)
 //===============================================================================
 void sendLoRa(String TxLine)
 {
-  SetupLoRa();
+  setupLoRa();
 
   DBGPRNTST(F("Sending LoRa ... "));
    

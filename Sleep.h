@@ -5,15 +5,15 @@
 
 #include <Arduino.h>
 
-void setup_Sleep(void);
+void setupSleep(void);
 
-void my_Sleep();
+void mySleep();
 
-void setup_PowerPins();
+void setupPowerPins();
 
-void enable_PowerPins();
+void enablePowerPins();
 
-void disable_PowerPins();
+void disablePowerPins();
 
 extern volatile bool watchdogActivated;
 extern volatile int sleepIterations;

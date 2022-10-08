@@ -5,10 +5,10 @@
 
 #include <Arduino.h>
 
-float ReadExternalVoltage();
+float readExternalVoltage();
 
-float ReadVCC();
+float readVCC();
 
-float ReadTemp();
+float readTemp();
 
 #endif

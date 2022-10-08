@@ -39,8 +39,7 @@
 *     
 * The LoRa payload looks the same, except for the callsign (if you changed that).     
 ************************************************************************************/
-//===============================================================================
-void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPrefix)
+void createLoRaTXLine(const char *PayloadID, unsigned long aCounter, const char *aPrefix)
 {
    int Count, i, j;
    unsigned int CRC;
@@ -57,11 +56,11 @@ void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPr
 #endif
 
   // Get the battery voltage
-  dtostrf(ReadVCC(), 4, 2, BattVoltage);
+  dtostrf(readVCC(), 4, 2, BattVoltage);
   DBGPRNTST(F("BattVoltage: ")); DBGPRNTLN(BattVoltage);
 
   // Get the external voltage
-  dtostrf(ReadExternalVoltage(), 4, 2, ExtVoltage);
+  dtostrf(readExternalVoltage(), 4, 2, ExtVoltage);
   DBGPRNTST(F("ExtVoltage: ")); DBGPRNTLN(ExtVoltage);
          
   dtostrf(UGPS.Latitude, 7, 5, LatitudeString);
@@ -92,6 +91,78 @@ void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPr
 
   Count = strlen(Sentence);
 
+  // Calc UKHAS CRC
+  CRC = 0xffff;           // Seed
+   
+  for (i = strlen(aPrefix); i < Count; i++)
+  {   // For speed, repeat calculation instead of looping for each bit
+    CRC ^= (((unsigned int)Sentence[i]) << 8);
+    for (j=0; j<8; j++)
+    {
+      if (CRC & 0x8000)
+        CRC = (CRC << 1) ^ 0x1021;
+      else
+        CRC <<= 1;
+    }
+  }
+
+  Sentence[Count++] = '*'; // Count++ accesses Sentence[Count] and then increments Count
+  Sentence[Count++] = hexConvert((CRC >> 12) & 15);
+  Sentence[Count++] = hexConvert((CRC >> 8) & 15);
+  Sentence[Count++] = hexConvert((CRC >> 4) & 15);
+  Sentence[Count++] = hexConvert(CRC & 15);
+  Sentence[Count++] = '\n';
+  Sentence[Count++] = '\0';
+
+  DBGPRNTST(F("TX Line: ")); DBGPRNT(Sentence);
+
+#ifndef LORA_EXPLICITMODE
+  // In Implicit mode we dont Tx a LoRa header, lora-gateway then expects a 255 byte string
+  DBGPRNTST(F("Implicit mode - Start Count = ")); DBGPRNT(Count); DBGPRNT(" ");
+
+  // Overwrite the \n \0
+  Sentence[Count - 2] = ' ';
+  Sentence[Count - 1] = ' ';
+
+  for (;Count < SENTENCE_LENGTH - 1;)
+  {
+    Sentence[Count++] = ' '; // Over write /0 on first iteration
+    //DBGPRNT(">");
+  }
+
+  Sentence[Count++] = '\n';
+  Sentence[Count] = '\0';
+
+  DBGPRNT(" End Count = "); DBGPRNT(Count); DBGPRNTLN(".");
+#endif
+
+  
+}
+
+
+void createRTTYTXLine(const char *PayloadID, unsigned long aCounter, const char *aPrefix)
+{
+   int Count, i, j;
+   unsigned int CRC;
+   char LatitudeString[16], LongitudeString[16];
+
+  dtostrf(UGPS.Latitude, 7, 5, LatitudeString);
+  dtostrf(UGPS.Longitude, 7, 5, LongitudeString);   
+   
+  sprintf(Sentence,
+            "%s%s,%ld,%02d:%02d:%02d,%s,%s,%ld,%u",
+            aPrefix,
+            PayloadID,
+            aCounter,
+            UGPS.Hours, UGPS.Minutes, UGPS.Seconds,   
+            LatitudeString,
+            LongitudeString,
+            UGPS.Altitude,
+            UGPS.Satellites
+  );
+
+  Count = strlen(Sentence);
+
   // Calc CRC
   CRC = 0xffff;           // Seed
    
@@ -108,18 +179,19 @@ void CreateTXLine(const char *PayloadID, unsigned long aCounter, const char *aPr
   }
 
   Sentence[Count++] = '*';
-  Sentence[Count++] = Hex((CRC >> 12) & 15);
-  Sentence[Count++] = Hex((CRC >> 8) & 15);
-  Sentence[Count++] = Hex((CRC >> 4) & 15);
-  Sentence[Count++] = Hex(CRC & 15);
+  Sentence[Count++] = hexConvert((CRC >> 12) & 15);
+  Sentence[Count++] = hexConvert((CRC >> 8) & 15);
+  Sentence[Count++] = hexConvert((CRC >> 4) & 15);
+  Sentence[Count++] = hexConvert(CRC & 15);
   Sentence[Count++] = '\n';  
   Sentence[Count++] = '\0';
 
   DBGPRNTST(F("TX Line: ")); DBGPRNT(Sentence);
 }
 
+
 //===============================================================================
-char Hex(char Character)
+char hexConvert(char Character)
 {
   char HexTable[] = "0123456789ABCDEF";
   

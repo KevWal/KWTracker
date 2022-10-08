@@ -70,10 +70,12 @@
 #define LORA_CURRENTLIMIT 80         // in mA, accepted range is 0 (protection disabled), 45 - 240 mA
 #define LORA_PREAMBLELENGTH 8        // length of LoRa preamble in symbols, allowed values range from 6 to 65535
 #define LORA_GAIN 0                  // gain of receiver LNA. Can be set to any integer in range 1 to 6 where 1 is the highest gain. Set to 0 to enable automatic gain control (recommended).
-#define LORA_MODE 0                  // See HAB LoRa modes below
-#define LORA_REPEATS 1               // number of LoRa transmits during a cycle
+#define LORA_MODE 5                  // See HAB LoRa modes below
+#define LORA_REPEATS 10               // number of LoRa transmits during a cycle
 
 // HAB LoRa Modes:
+// Do not / can not use Implict modes for UKHAS Telemetry strings (string has to be 255 bytes and lora-gateway wont process anything > 250 bytes as a telemetry string)
+// Narrower bandwidth improves range, higher spreading factor increases reslience, higher error coding rate increases Forward Error Correction
 // Num; ImplicitOrExplicit; ErrorCoding; Bandwidth; SpreadingFactor; LowDataRateOptimize; BaudRate; Description
 // 0: EXPLICIT_MODE, ERROR_CODING_4_8, BANDWIDTH_20K8, SPREADING_11, 1,    60, Telemetry - Normal mode for telemetry
 // 1: IMPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_20K8, SPREADING_6,  0,  1400, SSDV - Normal mode for SSDV
@@ -81,10 +83,82 @@
 // 3: EXPLICIT_MODE, ERROR_CODING_4_6, BANDWIDTH_250K, SPREADING_7,  0,  8000, Turbo - Normal mode for high speed images in 868MHz band
 // 4: IMPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_250K, SPREADING_6,  0, 16828, TurboX - Fastest mode within IR2030 in 868MHz band
 // 5: EXPLICIT_MODE, ERROR_CODING_4_8, BANDWIDTH_41K7, SPREADING_11, 0,   200, Calling - Calling mode
-// 6: EXPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_20K8, SPREADING_7,  0,  2800, Uplink - Uplink explicit mode (variable length)
+// 6: EXPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_20K8, SPREADING_7,  0,  2800, Uplink - Uplink explicit mode (variable length) (note commented out in some versions of lora-gateway)
 // 7: IMPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_41K7, SPREADING_6,  0,  2800, Uplink - Uplink mode for 868
 // 8: EXPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_20K8, SPREADING_7,  0,   910, Telnet - Telnet-style comms with HAB on 434
 // 9: IMPLICIT_MODE, ERROR_CODING_4_5, BANDWIDTH_62K5, SPREADING_6,  0,  4500, SSDV Repeater - Fast (SSDV) repeater network
+
+// For 433Mhz ISM in the UK comply with:
+// IR2030/1/10 433.05-434.79 MHz 10 mW e.r.p. Duty cycle limit 10% or;
+// IR2030/1/11 433.05-434.79 MHz 1mW erp (no duty cycle limit);
+// IR2030/1/12 433.04-434.79 MHz 10 mW e.r.p. Channel Spacing <= 25 kHz
+
+#if LORA_MODE == 0
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 8
+  #define LORA_BW 20.8
+  #define LORA_SPREADFACTOR 11
+  #define LORA_LDRO
+#endif
+
+#if LORA_MODE == 1
+  #define LORA_CODERATE 5
+  #define LORA_BW 20.8
+  #define LORA_SPREADFACTOR 6
+#endif
+
+#if LORA_MODE == 2
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 8
+  #define LORA_BW 62.5
+  #define LORA_SPREADFACTOR 8
+#endif
+
+#if LORA_MODE == 3
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 6
+  #define LORA_BW 250
+  #define LORA_SPREADFACTOR 7
+#endif
+
+#if LORA_MODE == 4
+  #define LORA_CODERATE 5
+  #define LORA_BW 250
+  #define LORA_SPREADFACTOR 6
+#endif
+
+#if LORA_MODE == 5
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 8
+  #define LORA_BW 41.7
+  #define LORA_SPREADFACTOR 11
+#endif
+
+#if LORA_MODE == 6
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 5
+  #define LORA_BW 20.8
+  #define LORA_SPREADFACTOR 7
+#endif
+
+#if LORA_MODE == 7
+  #define LORA_CODERATE 5
+  #define LORA_BW 41.7
+  #define LORA_SPREADFACTOR 6
+#endif
+
+#if LORA_MODE == 8
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 5
+  #define LORA_BW 20.8
+  #define LORA_SPREADFACTOR 7
+#endif
+
+#if LORA_MODE == 9
+  #define LORA_CODERATE 5
+  #define LORA_BW 62.5
+  #define LORA_SPREADFACTOR 6
+#endif
 
 
 /***********************************************************************************
@@ -92,16 +166,17 @@
 *  
 * Change if needed
 ************************************************************************************/
-#define SENTENCE_LENGTH 100     // Maximum length of telemetry line to send
+#define SENTENCE_LENGTH 255     // Maximum length of telemetry line to send
 
 // Allow time for the GPS to re-acquire a fix when using sleep mode!
 // Currently deep sleep is only enabled for ATMEGA328
 #define USE_DEEP_SLEEP true     // Put the ATMEGA328 chip to deep sleep while not transmitting. set to true or false.
                                 // The tracker will only go to sleep if there are more than 4 satellites visible   
-#define TIME_TO_SLEEP  15       // This is the number in seconds out of TX_LOOP_TIME that the CPU is in sleep. Only valid when USE_DEEP_SLEEP = true
+#define TIME_TO_SLEEP  10       // This is the number in seconds out of TX_LOOP_TIME that the CPU is in sleep. Only valid when USE_DEEP_SLEEP = true
 
-#define TX_LOOP_TIME   3       // When USE_DEEP_SLEEP=false: Number in seconds between transmits
+#define TX_LOOP_TIME   30       // When USE_DEEP_SLEEP=false: Number in seconds between transmits
                                 // When USE_DEEP_SLEEP=true : Time between transmits is TIME_TO_SLEEP+TX_LOOP_TIME+time it takes to transmit the data
+                                // When USE_DEEP_SLEEP=true TX_LOOP_TIME needs to be long enough to regain a GPS fix.
 
 
 /***********************************************************************************
@@ -134,16 +209,12 @@
 #ifdef DEVMODE 
   #define DBGBGN(...)   SERIALDBG.begin(__VA_ARGS__)
   #define DBGPRNTST(...)  \
-        SERIALDBG.print(millis());     \
-        SERIALDBG.print("ms : ");    \
         SERIALDBG.print(__func__); \
         SERIALDBG.print("() : ");      \
         SERIALDBG.print(__LINE__);     \
         SERIALDBG.print(" : ");      \
         SERIALDBG.print(__VA_ARGS__)
   #define DBGPRNTSTLN(...)  \
-        SERIALDBG.print(millis());     \
-        SERIALDBG.print("ms : ");    \
         SERIALDBG.print(__func__); \
         SERIALDBG.print("() : ");      \
         SERIALDBG.print(__LINE__);     \
@@ -186,7 +257,7 @@
 * This is supported by the various receivers made by Dave Akerman,
 * See: https://www.daveakerman.com/?page_id=2410
 * 
-* 0  PayloadID
+* 0 PayloadID
 * 1 Counter
 * 2 Time
 * 3 Latitude

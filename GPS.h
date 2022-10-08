@@ -7,10 +7,11 @@
 #include "Settings.h"
 #include <Arduino.h>
 
+#define UNKNOWN 0
 #define PEDESTRIAN 3
 #define AIRBORNE 6 
 
-void CheckGPS();
+void checkGPS();
 
 void smartDelay(unsigned long ms);
 
@@ -18,7 +19,7 @@ void processGPSData();
 
 void printGPSData();
 
-void SendUBX(unsigned char *Message, int Length);
+void sendUBX(unsigned char *Message, int Length);
 
 void setDesiredMode(uint8_t aDesiredMode);
 
