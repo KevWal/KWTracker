@@ -116,25 +116,25 @@ void createLoRaTXLine(const char *PayloadID, unsigned long aCounter, const char 
 
   DBGPRNTST(F("TX Line: ")); DBGPRNT(Sentence);
 
-#ifndef LORA_EXPLICITMODE
+//#ifndef LORA_EXPLICITMODE
   // In Implicit mode we dont Tx a LoRa header, lora-gateway then expects a 255 byte string
-  DBGPRNTST(F("Implicit mode - Start Count = ")); DBGPRNT(Count); DBGPRNT(" ");
+//  DBGPRNTST(F("Implicit mode - Start Count = ")); DBGPRNT(Count); DBGPRNT(" ");
 
   // Overwrite the \n \0
-  Sentence[Count - 2] = ' ';
-  Sentence[Count - 1] = ' ';
+  //Sentence[Count - 2] = ' ';
+  //Sentence[Count - 1] = ' ';
 
-  for (;Count < SENTENCE_LENGTH - 1;)
-  {
-    Sentence[Count++] = ' '; // Over write /0 on first iteration
+//  for (;Count < 255 - 1;) // 254
+//  {
+//    Sentence[Count++] = ' '; // Over write /0 on first iteration
     //DBGPRNT(">");
-  }
+//  }
 
-  Sentence[Count++] = '\n';
-  Sentence[Count] = '\0';
+//  Sentence[Count++] = '\n';
+//  Sentence[Count] = '\0';
 
-  DBGPRNT(" End Count = "); DBGPRNT(Count); DBGPRNTLN(".");
-#endif
+//  DBGPRNT(" End Count = "); DBGPRNT(Count); DBGPRNTLN(".");
+//#endif
 
   
 }

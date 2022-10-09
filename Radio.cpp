@@ -27,7 +27,7 @@ void setupRTTY()
 
   DBGPRNTST(F("[RTTY] Initializing ... "));
 
-  int16_t state = rtty.begin(RTTY_FREQUENCY, RTTY_SHIFT, RTTY_BAUD, RTTY_ASCII, RTTY_STOPBITS);
+  int16_t state = rtty.begin(RTTY_FREQUENCY, RTTY_SHIFT, RTTY_BAUD, RTTY_MODE, RTTY_STOPBITS);
   if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }         
 }
 
@@ -106,7 +106,7 @@ void setupRadio()
 
 
 //===============================================================================
-void sendRTTY(String TxLine)
+void sendRTTY(const char* TxLine)
 {
   // Disable the GPS serial temporarily 
   SERIALGPS.end();
@@ -130,13 +130,17 @@ void sendRTTY(String TxLine)
 
 
 //===============================================================================
-void sendLoRa(String TxLine)
+void sendLoRa(const char* TxLine)
 {
   setupLoRa();
 
   DBGPRNTST(F("Sending LoRa ... "));
    
   // Send the string
-  int16_t state = radio.transmit(TxLine);
+#ifdef LORA_EXPLICITMODE
+  int16_t state = radio.transmit(TxLine); // Send till \0
+#else
+  int16_t state = radio.transmit((uint8_t*)TxLine, 255); // Send a full 255 chars
+#endif
   if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F("success!")); else { DBGPRNT(F("failed, code: ")); DBGPRNTLN(state); }
 }

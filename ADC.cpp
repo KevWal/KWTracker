@@ -29,11 +29,12 @@ float readExternalVoltage()
 #else
     analogReference(DEFAULT);
 #endif
-    for (int i = 1; i <=5; i++)
+    for (int i = 1; i <=15; i++)
     {
       externalV += analogRead(EXTERNALVOLTAGE_PIN);
+      delay(15);
     }
-    externalV = externalV / 5;
+    externalV = externalV / 15;
     return ((internalV / SAMPLE_RES) * externalV * DIVIDER_RATIO) + EXT_OFFSET;
   }
   else
@@ -50,7 +51,7 @@ float readVCC()
 {
   long result;
   long avgmv = 0;
-  const int reps = 10;
+  const int reps = 15;
 
   // Measure the voltage 10 times and take average
   for (int i = 1; i <= reps; i++ )
@@ -61,7 +62,7 @@ float readVCC()
 #else
     ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
 #endif
-    delay(10); // Wait for Vref to settle
+    delay(15); // Wait for Vref to settle
     ADCSRA |= _BV(ADSC); // Enable the ADC
     while (bit_is_set(ADCSRA, ADSC));
     result = ADCW; // Reading register "ADCW" takes care of how to read ADCL and ADCH.

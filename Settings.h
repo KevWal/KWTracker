@@ -19,13 +19,14 @@
 *  
 * Normally needs no change
 ************************************************************************************/
-#define FSK_FREQUENCY 434.113
-#define FSK_BITRATE 100.0
-#define FSK_FREQDEV 50.0
-#define FSK_RXBANDWIDTH 125.0
-#define FSK_POWER 10   // in dBm between 2 and 17. 10 = 10mW (recommended). Sets also RTTY power
-#define FSK_PREAMBLELENGTH 16
-#define FSK_ENABLEOOK false
+#define FSK_FREQUENCY 434.0   // FSK Frequency in Mhz, Default 434.0
+#define FSK_BITRATE 4.8       // FSK Bit rate in kbps (kilobits per second). Default 4.8. Allowed values range from 1.2 to 300.0 kbps
+#define FSK_FREQDEV 5.0       // FSK Frequency deviation kHz. Default 5.0. Allowed values range from 0.6 to 200.0 kHz.
+                              // Note that the allowed range changes based on bit rate setting, so that the condition FreqDev + BitRate/2 <= 250 kHz is always met
+#define FSK_RXBANDWIDTH 125.0 // Default 125.0
+#define FSK_POWER 10          // FSK Power in dBm, Default 10, valid between 2 and 17. 10 = 10mW (recommended). Also sets RTTY power
+#define FSK_PREAMBLELENGTH 16 // Default 16, not used
+#define FSK_ENABLEOOK false   // Use OOK (On Off Keying) modulation instead of FSK. Default False
 
 
 /***********************************************************************************
@@ -34,20 +35,22 @@
 * Change when needed
 * Default RTTY setting is: 7,N,2 at 100 Baud.
 ************************************************************************************/
-#define RTTY_ENABLED true            // Set to true if you want RTTY transmissions (You can use Both LoRa and RTTY or only one of the two) 
-#define RTTY_PAYLOAD_ID  "RTTY_ID"   // Payload ID for RTTY protocol
-#define RTTY_FREQUENCY  434.113      // Can be different from LoRa frequency
-#define RTTY_SHIFT 610
-#define RTTY_BAUD 100                // Baud rate
+#define RTTY_ENABLED false             // Set to true if you want RTTY transmissions (You can use Both LoRa and RTTY or only one of the two) 
+#define RTTY_PAYLOAD_ID  "RTTY_ID"    // Payload ID for RTTY protocol
+#define RTTY_FREQUENCY  434.113       // Can be different from LoRa frequency
+#define RTTY_SHIFT 610                //  NOTE: RTTY frequency shift will be rounded to the nearest multiple of module frequency step size. SX127x/RFM9x - 61 Hz
+#define RTTY_BAUD 50                  // Baud rate
 #define RTTY_STOPBITS 2
 #define RTTY_PREFIX "$$$$$"          
- 
+
 // RTTY encoding modes (leave this unchanged)
 #define RTTY_ASCII 0                 // 7 data bits 
 #define RTTY_ASCII_EXTENDED 1        // 8 data bits
 #define RTTY_ITA2  2                 // Baudot 
 
-#define RTTY_REPEATS 1 // number of RTTY transmits during a cycle
+#define RTTY_MODE RTTY_ASCII_EXTENDED // RTTY encoding mode
+
+#define RTTY_REPEATS 3 // number of RTTY transmits during a cycle
 
 // Idle carrier in ms before sending actual RTTY string. 
 // Set to a low value (i.e. 1000 or lower) if you have a very frequency stable signal
@@ -61,8 +64,8 @@
 * Change when needed
 ************************************************************************************/
 #define LORA_ENABLED true            // Set to true if you want LoRa transmissions (You can use Both LoRa and RTTY or only one of the two)
-#define LORA_PAYLOAD_ID  "LORA-ID"   // Payload ID for LoRa protocol
-#define LORA_FREQUENCY  434.562      // Can be different from RTTY frequency
+#define LORA_PAYLOAD_ID "KW-BCK"   // Payload ID for LoRa protocol
+#define LORA_FREQUENCY 433.650      // Can be different from RTTY frequency
 #define LORA_PREFIX "$$"             // Some older LoRa software does not accept a prefix of more than 2x "$"
 #define LORA_SYNCWORD 0x12           // for sx1278
 // #define LORA_SYNCWORD 0x1424      // for sx1262 (currently not supported)
@@ -71,10 +74,9 @@
 #define LORA_PREAMBLELENGTH 8        // length of LoRa preamble in symbols, allowed values range from 6 to 65535
 #define LORA_GAIN 0                  // gain of receiver LNA. Can be set to any integer in range 1 to 6 where 1 is the highest gain. Set to 0 to enable automatic gain control (recommended).
 #define LORA_MODE 5                  // See HAB LoRa modes below
-#define LORA_REPEATS 10               // number of LoRa transmits during a cycle
+#define LORA_REPEATS 30               // number of LoRa transmits during a cycle
 
 // HAB LoRa Modes:
-// Do not / can not use Implict modes for UKHAS Telemetry strings (string has to be 255 bytes and lora-gateway wont process anything > 250 bytes as a telemetry string)
 // Narrower bandwidth improves range, higher spreading factor increases reslience, higher error coding rate increases Forward Error Correction
 // Num; ImplicitOrExplicit; ErrorCoding; Bandwidth; SpreadingFactor; LowDataRateOptimize; BaudRate; Description
 // 0: EXPLICIT_MODE, ERROR_CODING_4_8, BANDWIDTH_20K8, SPREADING_11, 1,    60, Telemetry - Normal mode for telemetry
@@ -93,80 +95,12 @@
 // IR2030/1/11 433.05-434.79 MHz 1mW erp (no duty cycle limit);
 // IR2030/1/12 433.04-434.79 MHz 10 mW e.r.p. Channel Spacing <= 25 kHz
 
-#if LORA_MODE == 0
-  #define LORA_EXPLICITMODE
-  #define LORA_CODERATE 8
-  #define LORA_BW 20.8
-  #define LORA_SPREADFACTOR 11
-  #define LORA_LDRO
-#endif
-
-#if LORA_MODE == 1
-  #define LORA_CODERATE 5
-  #define LORA_BW 20.8
-  #define LORA_SPREADFACTOR 6
-#endif
-
-#if LORA_MODE == 2
-  #define LORA_EXPLICITMODE
-  #define LORA_CODERATE 8
-  #define LORA_BW 62.5
-  #define LORA_SPREADFACTOR 8
-#endif
-
-#if LORA_MODE == 3
-  #define LORA_EXPLICITMODE
-  #define LORA_CODERATE 6
-  #define LORA_BW 250
-  #define LORA_SPREADFACTOR 7
-#endif
-
-#if LORA_MODE == 4
-  #define LORA_CODERATE 5
-  #define LORA_BW 250
-  #define LORA_SPREADFACTOR 6
-#endif
-
-#if LORA_MODE == 5
-  #define LORA_EXPLICITMODE
-  #define LORA_CODERATE 8
-  #define LORA_BW 41.7
-  #define LORA_SPREADFACTOR 11
-#endif
-
-#if LORA_MODE == 6
-  #define LORA_EXPLICITMODE
-  #define LORA_CODERATE 5
-  #define LORA_BW 20.8
-  #define LORA_SPREADFACTOR 7
-#endif
-
-#if LORA_MODE == 7
-  #define LORA_CODERATE 5
-  #define LORA_BW 41.7
-  #define LORA_SPREADFACTOR 6
-#endif
-
-#if LORA_MODE == 8
-  #define LORA_EXPLICITMODE
-  #define LORA_CODERATE 5
-  #define LORA_BW 20.8
-  #define LORA_SPREADFACTOR 7
-#endif
-
-#if LORA_MODE == 9
-  #define LORA_CODERATE 5
-  #define LORA_BW 62.5
-  #define LORA_SPREADFACTOR 6
-#endif
-
-
 /***********************************************************************************
 * TRANSMISSIONS SETTINGS
 *  
 * Change if needed
 ************************************************************************************/
-#define SENTENCE_LENGTH 255     // Maximum length of telemetry line to send
+#define SENTENCE_LENGTH 256     // Maximum length of telemetry line to send, needs to be 256 when using an implicit mode
 
 // Allow time for the GPS to re-acquire a fix when using sleep mode!
 // Currently deep sleep is only enabled for ATMEGA328
@@ -174,7 +108,7 @@
                                 // The tracker will only go to sleep if there are more than 4 satellites visible   
 #define TIME_TO_SLEEP  10       // This is the number in seconds out of TX_LOOP_TIME that the CPU is in sleep. Only valid when USE_DEEP_SLEEP = true
 
-#define TX_LOOP_TIME   30       // When USE_DEEP_SLEEP=false: Number in seconds between transmits
+#define TX_LOOP_TIME   20       // When USE_DEEP_SLEEP=false: Number in seconds between transmits
                                 // When USE_DEEP_SLEEP=true : Time between transmits is TIME_TO_SLEEP+TX_LOOP_TIME+time it takes to transmit the data
                                 // When USE_DEEP_SLEEP=true TX_LOOP_TIME needs to be long enough to regain a GPS fix.
 
@@ -206,30 +140,6 @@
 #define SERIALDBG Serial
 #define LED PIN_PA3
 
-#ifdef DEVMODE 
-  #define DBGBGN(...)   SERIALDBG.begin(__VA_ARGS__)
-  #define DBGPRNTST(...)  \
-        SERIALDBG.print(__func__); \
-        SERIALDBG.print("() : ");      \
-        SERIALDBG.print(__LINE__);     \
-        SERIALDBG.print(" : ");      \
-        SERIALDBG.print(__VA_ARGS__)
-  #define DBGPRNTSTLN(...)  \
-        SERIALDBG.print(__func__); \
-        SERIALDBG.print("() : ");      \
-        SERIALDBG.print(__LINE__);     \
-        SERIALDBG.print(" : ");      \
-        SERIALDBG.println(__VA_ARGS__)
-  #define DBGPRNT(...) SERIALDBG.print(__VA_ARGS__)
-  #define DBGPRNTLN(...) SERIALDBG.println(__VA_ARGS__)
-#else
-  #define DBGBGN(...)
-  #define DBGPRNTST(...)
-  #define DBGPRNTSTLN(...)  
-  #define DBGPRNT(...)
-  #define DBGPRNTLN(...)  
-#endif
-
        
 /***********************************************************************************
 * GPS SETTINGS
@@ -257,15 +167,10 @@
 * This is supported by the various receivers made by Dave Akerman,
 * See: https://www.daveakerman.com/?page_id=2410
 * 
-* 0 PayloadID
-* 1 Counter
-* 2 Time
-* 3 Latitude
-* 4 Longitude
-* 5 Altitude
-* 6 Satellites
-* 7 Speed
-* 8 Heading
+* 0 PayloadID, 1 Counter, 2 Time
+* 3 Latitude, 4 Longitude
+* 5 Altitude, 6 Satellites
+* 7 Speed, 8 Heading
 * 9 Battery Voltage
 * A InternalTemperature
 * B ExternalTemperature
@@ -335,4 +240,106 @@
 ************************************************************************************/
 // #define RESET_TRANS_COUNTERS
 
+
+/***********************************************************************************
+* #define Macros
+*  
+* No change normally needed
+************************************************************************************/
+#ifdef DEVMODE 
+  #define DBGBGN(...)   SERIALDBG.begin(__VA_ARGS__)
+  #define DBGFLUSH(...)  SERIALDBG.flush()
+  #define DBGPRNTST(...)  \
+        SERIALDBG.print(__func__); \
+        SERIALDBG.print("() : ");      \
+        SERIALDBG.print(__LINE__);     \
+        SERIALDBG.print(" : ");      \
+        SERIALDBG.print(__VA_ARGS__)
+  #define DBGPRNTSTLN(...)  \
+        SERIALDBG.print(__func__); \
+        SERIALDBG.print("() : ");      \
+        SERIALDBG.print(__LINE__);     \
+        SERIALDBG.print(" : ");      \
+        SERIALDBG.println(__VA_ARGS__)
+  #define DBGPRNT(...) SERIALDBG.print(__VA_ARGS__)
+  #define DBGPRNTLN(...) SERIALDBG.println(__VA_ARGS__)
+#else
+  #define DBGBGN(...)
+  #define DBGFLUSH(...)
+  #define DBGPRNTST(...)
+  #define DBGPRNTSTLN(...)  
+  #define DBGPRNT(...)
+  #define DBGPRNTLN(...)  
 #endif
+
+#if LORA_MODE == 0
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 8
+  #define LORA_BW 20.8
+  #define LORA_SPREADFACTOR 11
+  #define LORA_LDRO
+#endif
+
+#if LORA_MODE == 1
+  #define LORA_CODERATE 5
+  #define LORA_BW 20.8
+  #define LORA_SPREADFACTOR 6
+#endif
+
+#if LORA_MODE == 2
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 8
+  #define LORA_BW 62.5
+  #define LORA_SPREADFACTOR 8
+#endif
+
+#if LORA_MODE == 3
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 6
+  #define LORA_BW 250
+  #define LORA_SPREADFACTOR 7
+#endif
+
+#if LORA_MODE == 4
+  #define LORA_CODERATE 5
+  #define LORA_BW 250
+  #define LORA_SPREADFACTOR 6
+#endif
+
+#if LORA_MODE == 5
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 8
+  #define LORA_BW 41.7
+  #define LORA_SPREADFACTOR 11
+#endif
+
+#if LORA_MODE == 6
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 5
+  #define LORA_BW 20.8
+  #define LORA_SPREADFACTOR 7
+#endif
+
+#if LORA_MODE == 7
+  #define LORA_CODERATE 5
+  #define LORA_BW 41.7
+  #define LORA_SPREADFACTOR 6
+#endif
+
+#if LORA_MODE == 8
+  #define LORA_EXPLICITMODE
+  #define LORA_CODERATE 5
+  #define LORA_BW 20.8
+  #define LORA_SPREADFACTOR 7
+#endif
+
+#if LORA_MODE == 9
+  #define LORA_CODERATE 5
+  #define LORA_BW 62.5
+  #define LORA_SPREADFACTOR 6
+#endif
+
+
+#endif
+
+

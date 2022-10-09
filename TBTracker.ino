@@ -138,14 +138,15 @@ void loop()
       // Go to sleep after transmissions
       if (USE_DEEP_SLEEP)
       {
-        DBGPRNTST(F("Start sleep ... "));
+        DBGPRNTST(F("Start sleep "));
+        DBGFLUSH();
         sleepIterations = 0;    
         while (sleepIterations < TIME_TO_SLEEP)
         {
           mySleep(); // WDT iterates sleepIterations
-          DBGPRNT(".>.");
+          DBGPRNT(".>. "); DBGFLUSH();
         }
-        DBGPRNTLN(F(" awake!"));
+        DBGPRNTLN(F("awake!"));
         previousTX = millis();
       } // if (USE_DEEP_SLEEP)
 

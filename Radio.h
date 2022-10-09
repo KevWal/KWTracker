@@ -16,9 +16,9 @@ void resetRadio();
 
 void setupRadio();
 
-void sendRTTY(String TxLine);
+void sendRTTY(const char* TxLine);
 
-void sendLoRa(String TxLine);
+void sendLoRa(const char* TxLine);
 
 //If SerialGPS is defined then we are using a Hardware serial port and dont need Software Serial
 #ifndef SERIALGPS
