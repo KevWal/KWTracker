@@ -65,6 +65,7 @@
 ************************************************************************************/
 #define LORA_ENABLED true            // Set to true if you want LoRa transmissions (You can use Both LoRa and RTTY or only one of the two)
 #define LORA_PAYLOAD_ID "KW-BCK"   // Payload ID for LoRa protocol
+//#define LORA_FREQUENCY 434.562      // Can be different from RTTY frequency
 #define LORA_FREQUENCY 433.650      // Can be different from RTTY frequency
 #define LORA_PREFIX "$$"             // Some older LoRa software does not accept a prefix of more than 2x "$"
 #define LORA_SYNCWORD 0x12           // for sx1278
@@ -74,7 +75,7 @@
 #define LORA_PREAMBLELENGTH 8        // length of LoRa preamble in symbols, allowed values range from 6 to 65535
 #define LORA_GAIN 0                  // gain of receiver LNA. Can be set to any integer in range 1 to 6 where 1 is the highest gain. Set to 0 to enable automatic gain control (recommended).
 #define LORA_MODE 5                  // See HAB LoRa modes below
-#define LORA_REPEATS 30               // number of LoRa transmits during a cycle
+#define LORA_REPEATS 3               // number of LoRa transmits during a cycle
 
 // HAB LoRa Modes:
 // Narrower bandwidth improves range, higher spreading factor increases reslience, higher error coding rate increases Forward Error Correction
@@ -195,7 +196,7 @@
 * You can disable FIELDSTR by undefining it, if you want.
 ************************************************************************************/
 #define USE_FIELDSTR
-#define FIELDSTR "0123456A9I"
+#define FIELDSTR "0123456AI9"
 
 
 /***********************************************************************************

@@ -144,3 +144,12 @@ void sendLoRa(const char* TxLine)
 #endif
   if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F("success!")); else { DBGPRNT(F("failed, code: ")); DBGPRNTLN(state); }
 }
+
+
+//===============================================================================
+int8_t getRadioTemp()
+{
+  return radio.getTempRaw();
+}
+
+

@@ -9,6 +9,7 @@
 #include "Misc.h"
 #include "ADC.h"
 #include "TBTracker.h"
+#include "Radio.h"
 
 #include <EEPROM.h>
 
@@ -45,23 +46,23 @@ void createLoRaTXLine(const char *PayloadID, unsigned long aCounter, const char 
    unsigned int CRC;
    char LatitudeString[16], LongitudeString[16];
    char InternalTemp[10];
+   char VccVoltage[10];
    char BattVoltage[10];
-   char ExtVoltage[10];
 
 #ifdef ATMEGA1284P // ATMEGA1284P does not have an internal temperature sensor
-  dtostrf(0.0, 3, 1, InternalTemp);
+  dtostrf(getRadioTemp(), 3, 1, InternalTemp);
 #else // Get the internal chip temperature
-  dtostrf(ReadTemp(), 3, 1, InternalTemp);
-  DBGPRNTST(F("InternalTemp: ")); DBGPRNTLN(InternalTemp);
+  dtostrf(readTemp(), 3, 1, InternalTemp);
 #endif
+  DBGPRNTST(F("InternalTemp: ")); DBGPRNTLN(InternalTemp);
 
   // Get the battery voltage
-  dtostrf(readVCC(), 4, 2, BattVoltage);
-  DBGPRNTST(F("BattVoltage: ")); DBGPRNTLN(BattVoltage);
+  dtostrf(readVCC(), 4, 2, VccVoltage);
+  DBGPRNTST(F("VccVoltage: ")); DBGPRNTLN(VccVoltage);
 
   // Get the external voltage
-  dtostrf(readExternalVoltage(), 4, 2, ExtVoltage);
-  DBGPRNTST(F("ExtVoltage: ")); DBGPRNTLN(ExtVoltage);
+  dtostrf(readExternalVoltage(), 4, 2, BattVoltage);
+  DBGPRNTST(F("BattVoltage: ")); DBGPRNTLN(BattVoltage);
          
   dtostrf(UGPS.Latitude, 7, 5, LatitudeString);
   dtostrf(UGPS.Longitude, 7, 5, LongitudeString);   
@@ -81,8 +82,8 @@ void createLoRaTXLine(const char *PayloadID, unsigned long aCounter, const char 
             UGPS.Altitude,
             UGPS.Satellites,
             InternalTemp,
-            BattVoltage,
-            ExtVoltage
+            VccVoltage,
+            BattVoltage
 #if defined(USE_FIELDSTR)            
             ,
 			      FIELDSTR
