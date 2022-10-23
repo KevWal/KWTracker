@@ -96,6 +96,15 @@ void processGPSData()
    DBGPRNT(F("Alt not valid, "));
  }
 
+// Speed
+if (gps.speed.isValid())
+    UGPS.Speed = gps.speed.kmph();
+ else
+ {
+   UGPS.Speed = 0;
+   DBGPRNT(F("Speed not valid, "));
+ }
+
  if (UGPS.Altitude < 0)
    UGPS.Altitude = 0;
 

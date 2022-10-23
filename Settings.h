@@ -96,6 +96,25 @@
 // IR2030/1/11 433.05-434.79 MHz 1mW erp (no duty cycle limit);
 // IR2030/1/12 433.04-434.79 MHz 10 mW e.r.p. Channel Spacing <= 25 kHz
 
+
+/***********************************************************************************
+* HORUS FSK4 Settings
+*  
+* Change when needed
+************************************************************************************/
+#define FSK4_ENABLED true            // Set to true if you want FSK4 transmissions
+#define FSK4_PAYLOAD_ID 256      // Int16 Payload ID for FSK4 protocol
+#define FSK4_FREQ         434.200
+#define FSK4_BAUD       100
+#define FSK4_SPACING    270          // 270 results in a shift of 244 Hz due to the PLL Resolution of the SX127x
+#define FSK4_POWER 10                // in dBm between 2 and 17. 10 = 10mW (recommended)
+#define FSK4_CURRENTLIMIT 80         // in mA, accepted range is 0 (protection disabled), 45 - 240 mA
+
+#define FSK4_IDLE_TIME 1000         // Idle carrier in ms before sending actual FSK4 string.
+
+#define FSK4_REPEATS 3              // number of FSK4 transmits during a cycle
+
+
 /***********************************************************************************
 * TRANSMISSIONS SETTINGS
 *  

@@ -11,6 +11,7 @@
 #include "TBTracker.h"
 #include "Radio.h"
 
+#include <util/crc16.h>
 #include <EEPROM.h>
 
 /***********************************************************************************
@@ -191,6 +192,64 @@ void createRTTYTXLine(const char *PayloadID, unsigned long aCounter, const char 
 }
 
 
+
+
+int createFSK4TXLine(uint16_t PayloadID, unsigned long aCounter){
+  // Generate a Horus Binary v2 packet, and populate it with data.
+
+  struct HorusBinaryPacketV2 BinaryPacketV2;
+
+  BinaryPacketV2.PayloadID = PayloadID; // 0 = 4FSKTEST-V2. Refer https://github.com/projecthorus/horusdemodlib/blob/master/payload_id_list.txt
+  BinaryPacketV2.Counter = aCounter;
+  BinaryPacketV2.Hours = UGPS.Hours;
+  BinaryPacketV2.Minutes = UGPS.Minutes;
+  BinaryPacketV2.Seconds = UGPS.Seconds;
+  BinaryPacketV2.Latitude = UGPS.Latitude;
+  BinaryPacketV2.Longitude = UGPS.Longitude;
+  BinaryPacketV2.Altitude = UGPS.Altitude;
+  BinaryPacketV2.Speed = UGPS.Speed;
+
+  // BattVoltage 0 = 0.5v, 255 = 2.0V, linear steps in-between
+  BinaryPacketV2.BattVoltage = (uint8_t) (readExternalVoltage() - 0.5f) * (float) (255.0f / 1.5f);
+
+  BinaryPacketV2.Sats = UGPS.Satellites;
+
+#ifdef ATMEGA1284P // ATMEGA1284P does not have an internal temperature sensor
+  BinaryPacketV2.Temp = getRadioTemp();
+#else // Get the internal chip temperature
+  BinaryPacketV2.Temp = readTemp();
+#endif
+
+  // Custom section. This is an example only, and the 9 bytes in this section can be used in other
+  // ways. Refer here for details: https://github.com/projecthorus/horusdemodlib/wiki/5-Customising-a-Horus-Binary-v2-Packet
+  BinaryPacketV2.dummy1 = 1;        // uint8
+  BinaryPacketV2.dummy2 = 1.23456;  // float32
+  BinaryPacketV2.dummy3 = 100;      // uint8 - interpreted as a battery voltage 0-5V
+  BinaryPacketV2.dummy4 = 123;      // uint8 - interpreted as a fixed-point value (div/10)
+  BinaryPacketV2.dummy5 = 1234;     // uint16 - interpreted as a fixed-point value (div/100)
+
+  BinaryPacketV2.Checksum = (uint16_t)crc16((unsigned char*)&BinaryPacketV2, sizeof(BinaryPacketV2)-2);
+
+  memcpy(Sentence, &BinaryPacketV2, sizeof(BinaryPacketV2));
+	
+  return sizeof(struct HorusBinaryPacketV2);
+}
+
+
+//===============================================================================
+// Fast CRC16 code, using Atmel's optimized libraries!
+unsigned int crc16(unsigned char *string, unsigned int len) {
+	unsigned int i;
+	unsigned int crc;
+	crc = 0xFFFF; // Standard CCITT seed for CRC16.
+	// Calculate the sum, ignore $ sign's
+	for (i = 0; i < len; i++) {
+		crc = _crc_xmodem_update(crc,(uint8_t)string[i]);
+	}
+	return crc;
+}
+
+
 //===============================================================================
 char hexConvert(char Character)
 {
@@ -239,4 +298,5 @@ void resetTransmissionCounters()
 {
    EEPROMWritelong(0x00,0);
    EEPROMWritelong(0x04,0);
+   EEPROMWritelong(0x08,0);
 }

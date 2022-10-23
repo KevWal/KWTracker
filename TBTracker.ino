@@ -30,6 +30,7 @@
 #include "GPS.h"
 #include "Misc.h"
 #include "Radio.h"
+#include "Horus_L2.h"
 #include "Sleep.h"
 #include "Settings.h"
 #include "TBTracker.h"
@@ -42,8 +43,10 @@
 * Normally no change necessary
 ************************************************************************************/
 char Sentence[SENTENCE_LENGTH];
+uint8_t codedbuffer [128]; // Buffer to store an encoded binary FSK4 packet
 long RTTYCounter = 0;
 long LoRaCounter = 0;
+long FSK4Counter = 0;
 unsigned long previousTX = 0;
 volatile bool watchdogActivated = true;
 volatile int sleepIterations = 0;
@@ -134,6 +137,21 @@ void loop()
           EEPROMWritelong(0x04, LoRaCounter);
         }
       } // if (LORA_ENABLED)
+
+      // Send Horus FSK4
+      if (FSK4_ENABLED)
+      {
+        for (int i=1; i <= FSK4_REPEATS; i++)
+        {
+          FSK4Counter = EEPROMReadlong(0x08);
+          int pkt_len = createFSK4TXLine(FSK4_PAYLOAD_ID, FSK4Counter++);
+          int coded_len = horus_l2_encode_tx_packet((unsigned char*)codedbuffer, (unsigned char*)Sentence, pkt_len);
+          sendFSK4(codedbuffer, coded_len); 
+          // Write the FSK4 counter to EEPROM at address 0x08
+          EEPROMWritelong(0x08, FSK4Counter);
+        }
+
+      }
 
       // Go to sleep after transmissions
       if (USE_DEEP_SLEEP)

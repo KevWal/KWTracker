@@ -20,6 +20,8 @@ void sendRTTY(const char* TxLine);
 
 void sendLoRa(const char* TxLine);
 
+void sendFSK4(uint8_t* codedbuffer, size_t coded_len);
+
 int8_t getRadioTemp();
 
 //If SerialGPS is defined then we are using a Hardware serial port and dont need Software Serial

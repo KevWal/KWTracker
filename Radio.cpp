@@ -9,6 +9,7 @@
 #include "Radio.h"
 #include "TBTracker.h"
 #include "Settings.h"
+#include "Horus_L1.h"
 
 #include <RadioLib.h>
 
@@ -17,19 +18,6 @@ SX1278 radio = new Module(PIN_NSS, PIN_DIO0, PIN_RESET, PIN_DIO1);
 
 // create RTTY client instance using the radio module
 RTTYClient rtty(&radio);
-
-
-//===============================================================================
-void setupRTTY()
-{
-  // First setup FSK
-  setupFSK();
-
-  DBGPRNTST(F("[RTTY] Initializing ... "));
-
-  int16_t state = rtty.begin(RTTY_FREQUENCY, RTTY_SHIFT, RTTY_BAUD, RTTY_MODE, RTTY_STOPBITS);
-  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }         
-}
 
 
 //===============================================================================
@@ -43,6 +31,19 @@ void setupFSK()
 
   int16_t state = radio.beginFSK(FSK_FREQUENCY, FSK_BITRATE, FSK_FREQDEV, FSK_RXBANDWIDTH, FSK_POWER, FSK_PREAMBLELENGTH, FSK_ENABLEOOK);
   if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
+}
+
+
+//===============================================================================
+void setupRTTY()
+{
+  // First setup FSK
+  setupFSK();
+
+  DBGPRNTST(F("[RTTY] Initializing ... "));
+
+  int16_t state = rtty.begin(RTTY_FREQUENCY, RTTY_SHIFT, RTTY_BAUD, RTTY_MODE, RTTY_STOPBITS);
+  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }         
 }
 
 
@@ -83,6 +84,20 @@ void setupLoRa()
 
 
 //===============================================================================
+// Initialize the SX1278 for Horus FSK4
+void setupFSK4()
+{
+  // First setup FSK
+  setupFSK();
+
+  DBGPRNTST(F("[FSK4] Initializing ... "));
+
+  int16_t state = fsk4_setup(&radio, FSK4_FREQ, FSK4_SPACING, FSK4_BAUD);
+  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }         
+}
+
+
+//===============================================================================
 void resetRadio()
 {
   // Use for ESP based boards
@@ -102,6 +117,7 @@ void setupRadio()
   // Setting up the radio
   setupRTTY();
   setupLoRa();
+  setupFSK4();
 }
 
 
@@ -143,6 +159,26 @@ void sendLoRa(const char* TxLine)
   int16_t state = radio.transmit((uint8_t*)TxLine, 255); // Send a full 255 chars
 #endif
   if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F("success!")); else { DBGPRNT(F("failed, code: ")); DBGPRNTLN(state); }
+}
+
+
+//===============================================================================
+void sendFSK4(uint8_t* codedbuffer, size_t coded_len)
+{
+  setupFSK4();
+
+  // send out idle condition for 1000 ms
+  fsk4_idle(&radio);
+  delay(FSK4_IDLE_TIME);
+
+  DBGPRNTST(F("Sending FSK4 ... "));
+   
+  // Send the string
+  //int16_t state = XXX(TxLine); // Send till \0
+  fsk4_preamble(&radio, 8);
+  fsk4_write(&radio, codedbuffer, coded_len);
+  //if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F("success!")); else { DBGPRNT(F("failed, code: ")); DBGPRNTLN(state); }
+  DBGPRNTLN(F("done."));
 }
 
 

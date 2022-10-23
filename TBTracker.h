@@ -3,6 +3,7 @@
 #ifndef TBTRACKER_H
 #define TBTRACKER_H
 
+#include "Settings.h"
 #include <Arduino.h>
 
 /***********************************************************************************
@@ -18,6 +19,7 @@ struct TGPS
   long Altitude;
   unsigned int Satellites;
   uint8_t FlightMode;
+  double Speed;
 };
 
 #endif
