@@ -1,7 +1,7 @@
-// TBTracker.h
+// KWTracker.h
 
-#ifndef TBTRACKER_H
-#define TBTRACKER_H
+#ifndef KWTRACKER_H
+#define KWTRACKER_H
 
 #include "Settings.h"
 #include <Arduino.h>

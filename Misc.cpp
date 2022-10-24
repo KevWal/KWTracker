@@ -8,7 +8,7 @@
 ************************************************************************************/
 #include "Misc.h"
 #include "ADC.h"
-#include "TBTracker.h"
+#include "KWTracker.h"
 #include "Radio.h"
 
 #include <util/crc16.h>
@@ -231,6 +231,8 @@ int createFSK4TXLine(uint16_t PayloadID, unsigned long aCounter){
   BinaryPacketV2.Checksum = (uint16_t)crc16((unsigned char*)&BinaryPacketV2, sizeof(BinaryPacketV2)-2);
 
   memcpy(Sentence, &BinaryPacketV2, sizeof(BinaryPacketV2));
+
+  // DBGPRNTST(F("TX Line: ")); DBGPRNTLN(Sentence); ToDo Print binary sentance
 	
   return sizeof(struct HorusBinaryPacketV2);
 }

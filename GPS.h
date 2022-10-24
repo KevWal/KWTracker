@@ -3,7 +3,7 @@
 #ifndef GPS_H
 #define GPS_H
 
-#include "TBTracker.h"
+#include "KWTracker.h"
 #include "Settings.h"
 #include <Arduino.h>
 

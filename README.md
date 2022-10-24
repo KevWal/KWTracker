@@ -1,4 +1,27 @@
-# TBTracker
+# KW Tracker Updates
+
+This tracker code is based heavily on the work by Roel Kroes in TBTracker, but now heavily modified by me.
+
+- Power down GPS before Tx to save battery (Backup line still powered)
+
+- Addition of all UKHAS / HABHUB / Akerman LoRa Modes
+
+- Refactored into a C++ structure using guarded header files and cpp files (apart from TBTracker.ino is 
+still named .ino to maintain Arduino IDE compatibility), this allows it to be compiled in both Arduino IDE and other C++ compilers 
+like PlatformIO, as well as significantly speeding up development time as the whole program does not need recompiling after every change.
+
+- Different Debug serial port handling
+
+- Create a smaller RTTY sentence
+
+- Added ability to use ATMEGA1284P
+
+- Added ability to use temperature from LoRa Module
+
+- Added an LED showing GPS lock status
+
+
+# Original TBTracker Readme
 Plug and Play RTTY and LoRa High Altitude Balloon Tracker for Arduino and SX127x (or Hope RFM9x).
 
 TBTracker is a sketch for a tracker for high altitude weather balloons. It will send telemetry data in RTTY and LoRa format.
@@ -25,11 +48,6 @@ You will need two extra Arduino libraries to be able to compile this sketch.:
  https://github.com/jgromes/RadioLib (RadioLib)
  
  https://github.com/mikalhart/TinyGPSPlus (TinyGPS++)
-
-[KW]
-This program is now refactored into a C++ structure using guarded header files and cpp files (apart from TBTracker.ino is 
-still named .ino to maintain Arduino IDE compatibility) , this allows it to be compiled in both Arduino IDE and other C++ compilers 
-like PlatformIO, as well as significantly speeding up development time as the whole program does not need recompiling after every change.
 
 To run this, you need a TTGO T-Deer board or:
  *  1 x Arduino Mini - 3.3v (or compatible Arduino board)

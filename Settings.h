@@ -17,16 +17,17 @@
 /***********************************************************************************
 * DEFAULT FSK SETTINGS
 *  
-* Normally needs no change
+* Normally needs no change, just base settings, not used for RTTY, Lora nor FSK4 modes
 ************************************************************************************/
 #define FSK_FREQUENCY 434.0   // FSK Frequency in Mhz, Default 434.0
 #define FSK_BITRATE 4.8       // FSK Bit rate in kbps (kilobits per second). Default 4.8. Allowed values range from 1.2 to 300.0 kbps
 #define FSK_FREQDEV 5.0       // FSK Frequency deviation kHz. Default 5.0. Allowed values range from 0.6 to 200.0 kHz.
                               // Note that the allowed range changes based on bit rate setting, so that the condition FreqDev + BitRate/2 <= 250 kHz is always met
 #define FSK_RXBANDWIDTH 125.0 // Default 125.0
-#define FSK_POWER 10          // FSK Power in dBm, Default 10, valid between 2 and 17. 10 = 10mW (recommended). Also sets RTTY power
 #define FSK_PREAMBLELENGTH 16 // Default 16, not used
 #define FSK_ENABLEOOK false   // Use OOK (On Off Keying) modulation instead of FSK. Default False
+
+#define FSK_POWER 10          // FSK Power in dBm, Default 10, valid between 2 and 17. 10 = 10mW (recommended). Also sets RTTY power
 
 
 /***********************************************************************************
@@ -123,9 +124,8 @@
 #define SENTENCE_LENGTH 256     // Maximum length of telemetry line to send, needs to be 256 when using an implicit mode
 
 // Allow time for the GPS to re-acquire a fix when using sleep mode!
-// Currently deep sleep is only enabled for ATMEGA328
-#define USE_DEEP_SLEEP true     // Put the ATMEGA328 chip to deep sleep while not transmitting. set to true or false.
-                                // The tracker will only go to sleep if there are more than 4 satellites visible   
+#define USE_DEEP_SLEEP true     // Put the ATMEGA chip to deep sleep while not transmitting. set to true or false.
+                                // The tracker will only go to sleep if there are more than X satellites visible   
 #define TIME_TO_SLEEP  10       // This is the number in seconds out of TX_LOOP_TIME that the CPU is in sleep. Only valid when USE_DEEP_SLEEP = true
 
 #define TX_LOOP_TIME   20       // When USE_DEEP_SLEEP=false: Number in seconds between transmits
