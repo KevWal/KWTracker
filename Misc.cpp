@@ -1,3 +1,4 @@
+#include "Print.h"
 // Misc.cpp
 
 /***********************************************************************************
@@ -209,8 +210,10 @@ int createFSK4TXLine(uint16_t PayloadID, unsigned long aCounter){
   BinaryPacketV2.Altitude = UGPS.Altitude;
   BinaryPacketV2.Speed = UGPS.Speed;
 
+  //DBGPRNTST(F("BattVoltageRaw: ")); DBGPRNTLN(readExternalVoltage());
   // BattVoltage 0 = 0.5v, 255 = 2.0V, linear steps in-between
-  BinaryPacketV2.BattVoltage = (uint8_t) (readExternalVoltage() - 0.5f) * (float) (255.0f / 1.5f);
+  BinaryPacketV2.BattVoltage = (uint8_t) ((min(readExternalVoltage(),2) - 0.5f) * 170); // 255 / 1.5v = 170
+  DBGPRNTST(F("EncodedBattVoltage: ")); DBGPRNTLN(BinaryPacketV2.BattVoltage);
 
   BinaryPacketV2.Sats = UGPS.Satellites;
 
@@ -228,12 +231,11 @@ int createFSK4TXLine(uint16_t PayloadID, unsigned long aCounter){
   BinaryPacketV2.dummy4 = 123;      // uint8 - interpreted as a fixed-point value (div/10)
   BinaryPacketV2.dummy5 = 1234;     // uint16 - interpreted as a fixed-point value (div/100)
 
-  BinaryPacketV2.Checksum = (uint16_t)crc16((unsigned char*)&BinaryPacketV2, sizeof(BinaryPacketV2)-2);
+  BinaryPacketV2.Checksum = (uint16_t) crc16((unsigned char*) &BinaryPacketV2, sizeof(BinaryPacketV2) - sizeof(BinaryPacketV2.Checksum));
+  DBGPRNTST(F("Checksum: ")); DBGPRNTLN(BinaryPacketV2.Checksum, HEX);
 
   memcpy(Sentence, &BinaryPacketV2, sizeof(BinaryPacketV2));
 
-  // DBGPRNTST(F("TX Line: ")); DBGPRNTLN(Sentence); ToDo Print binary sentance
-	
   return sizeof(struct HorusBinaryPacketV2);
 }
 

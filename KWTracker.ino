@@ -145,7 +145,27 @@ void loop()
         {
           FSK4Counter = EEPROMReadlong(0x08);
           int pkt_len = createFSK4TXLine(FSK4_PAYLOAD_ID, FSK4Counter++);
+
+          DBGPRNTST(F("TX Line: "));
+          for (int a = 0; a < pkt_len; a++)
+          {
+            DBGPRNT("0x");  
+            DBGPRNT(Sentence[a] < 16 ? "0" : ""); // Prepend with a zero if less than 16
+            DBGPRNT((uint8_t)Sentence[a], HEX); DBGPRNT(" "); DBGFLUSH();
+          }
+          DBGPRNTLN();
+
           int coded_len = horus_l2_encode_tx_packet((unsigned char*)codedbuffer, (unsigned char*)Sentence, pkt_len);
+
+          DBGPRNTST(F("Coded Line: "));
+          for (int n = 0; n < coded_len; n++)
+          {
+            DBGPRNT("0x");  
+            DBGPRNT(codedbuffer[n] < 16 ? "0" : ""); // Prepend with a zero if less than 16
+            DBGPRNT((uint8_t)codedbuffer[n], HEX); DBGPRNT(" "); DBGFLUSH();
+          }
+          DBGPRNTLN();
+
           sendFSK4(codedbuffer, coded_len); 
           // Write the FSK4 counter to EEPROM at address 0x08
           EEPROMWritelong(0x08, FSK4Counter);
