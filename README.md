@@ -2,7 +2,7 @@
 
 This tracker code is based heavily on the work by Roel Kroes in TBTracker, but now heavily modified by me.
 
-- Power down GPS before Tx to save battery (Backup line still powered)
+- Power down GPS before Tx to save battery (GPS backup power still live)
 
 - Addition of all UKHAS / HABHUB / Akerman LoRa Modes
 
