@@ -10,6 +10,7 @@
 
 #include "KWTracker.h"
 #include "Settings.h"
+#include "ADC.h"
 
 #include <avr/sleep.h>
 #include <avr/power.h>
@@ -117,6 +118,17 @@ void setupPowerPins()
 // Set the defined power pins HIGH
 void enablePowerPins()
 {
+
+// Protect 3.8v gps if programming from 5v's, wont protect radio module though
+if (readVCC() > 4.0) {
+  DBGPRNTSTLN(F("ERROR: VCC > 4.0v, not powering on power pins!"));
+  digitalWrite(LED, HIGH);
+  delay(3000);
+  return;
+} else {
+  DBGPRNTST(F("VCC < 4.0v, "));
+}
+
 #if (POWER_PIN1 > 0)
     digitalWrite(POWER_PIN1, HIGH);
 #endif
@@ -137,7 +149,7 @@ void enablePowerPins()
     digitalWrite(POWER_PIN5, HIGH);
 #endif
 
-  DBGPRNTSTLN(F("GPS powered on."));
+  DBGPRNTLN(F("Power Pins on."));
 }
 
 

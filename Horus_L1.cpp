@@ -54,6 +54,9 @@ int16_t fsk4_transmitDirect(PhysicalLayer* phy, uint32_t freq) {
 
 void fsk4_tone(PhysicalLayer* phy, uint8_t i) {
   uint32_t start = micros();
+#ifdef DEVTIMING
+  PINB = 0b00000111; //digitalWrite(DEVTIMING, !digitalRead(DEVTIMING));
+#endif
   fsk4_transmitDirect(phy, fsk4_base + fsk4_tones[i]);
   //delayMicroseconds(fsk4_bitDuration);
   while(micros() - start < fsk4_bitDuration) {

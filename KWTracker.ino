@@ -64,9 +64,11 @@ void setup()
 {
   // Setup Serial for debugging
   DBGBGN(DBGBAUD);
+  DBGPRNTSTLN(F("Start"));
 
-  // Setup the UBlox GPS
-  SERIALGPS.begin(GPSBAUD);
+  // Setup LED
+  pinMode(LED, OUTPUT);
+  digitalWrite(LED, LOW);
 
 #if defined(RESET_TRANS_COUNTERS)
   resetTransmissionCounters();
@@ -80,9 +82,13 @@ void setup()
   setupPowerPins();
   enablePowerPins();
 
-  // Setup LED
-  pinMode(LED, OUTPUT);
-  digitalWrite(LED, LOW);
+  // Setup the UBlox GPS
+  SERIALGPS.begin(GPSBAUD);
+
+#ifdef DEVTIMING
+  pinMode(DEVTIMING, OUTPUT);
+#endif // DEVTIMING
+
 }
 
 
@@ -123,7 +129,9 @@ void loop()
       } // if (RTTY_ENABLED)
 
       // Delay in milliseconds between rtty and lora. You can change this
+      if (UGPS.Altitude < 1000) digitalWrite(LED, HIGH);
       delay(1000);
+      digitalWrite(LED, LOW);
      
       // Send LoRa 
       if (LORA_ENABLED)
@@ -138,6 +146,11 @@ void loop()
         }
       } // if (LORA_ENABLED)
 
+      // Delay in milliseconds between lora and FSK4. You can change this
+      if (UGPS.Altitude < 1000) digitalWrite(LED, HIGH);
+      delay(1000);
+      digitalWrite(LED, LOW);
+
       // Send Horus FSK4
       if (FSK4_ENABLED)
       {
@@ -146,23 +159,21 @@ void loop()
           FSK4Counter = EEPROMReadlong(0x08);
           int pkt_len = createFSK4TXLine(FSK4_PAYLOAD_ID, FSK4Counter++);
 
-          DBGPRNTST(F("TX Line: "));
+          DBGPRNTST(F("TX Line: 0x"));
           for (int a = 0; a < pkt_len; a++)
           {
-            DBGPRNT("0x");  
             DBGPRNT(Sentence[a] < 16 ? "0" : ""); // Prepend with a zero if less than 16
-            DBGPRNT((uint8_t)Sentence[a], HEX); DBGPRNT(" "); DBGFLUSH();
+            DBGPRNT((uint8_t)Sentence[a], HEX); DBGPRNT(" "); 
           }
           DBGPRNTLN();
 
           int coded_len = horus_l2_encode_tx_packet((unsigned char*)codedbuffer, (unsigned char*)Sentence, pkt_len);
 
-          DBGPRNTST(F("Coded Line: "));
+          DBGPRNTST(F("Coded: 0x"));
           for (int n = 0; n < coded_len; n++)
           {
-            DBGPRNT("0x");  
             DBGPRNT(codedbuffer[n] < 16 ? "0" : ""); // Prepend with a zero if less than 16
-            DBGPRNT((uint8_t)codedbuffer[n], HEX); DBGPRNT(" "); DBGFLUSH();
+            DBGPRNT((uint8_t)codedbuffer[n], HEX); DBGPRNT(" "); 
           }
           DBGPRNTLN();
 

@@ -19,15 +19,15 @@
 *  
 * Normally needs no change, just base settings, not used for RTTY, Lora nor FSK4 modes
 ************************************************************************************/
-#define FSK_FREQUENCY 434.0   // FSK Frequency in Mhz, Default 434.0
-#define FSK_BITRATE 4.8       // FSK Bit rate in kbps (kilobits per second). Default 4.8. Allowed values range from 1.2 to 300.0 kbps
-#define FSK_FREQDEV 5.0       // FSK Frequency deviation kHz. Default 5.0. Allowed values range from 0.6 to 200.0 kHz.
+#define FSK_FREQUENCY 434.0   // FSK Frequency in Mhz, Default 434.0, not used
+#define FSK_BITRATE 4.8       // FSK Bit rate in kbps (kilobits per second). Default 4.8. Allowed values range from 1.2 to 300.0 kbps, not used
+#define FSK_FREQDEV 5.0       // FSK Frequency deviation kHz. Default 5.0. Allowed values range from 0.6 to 200.0 kHz, not used
                               // Note that the allowed range changes based on bit rate setting, so that the condition FreqDev + BitRate/2 <= 250 kHz is always met
-#define FSK_RXBANDWIDTH 125.0 // Default 125.0
+#define FSK_RXBANDWIDTH 125.0 // Default 125.0, not used
 #define FSK_PREAMBLELENGTH 16 // Default 16, not used
 #define FSK_ENABLEOOK false   // Use OOK (On Off Keying) modulation instead of FSK. Default False
 
-#define FSK_POWER 10          // FSK Power in dBm, Default 10, valid between 2 and 17. 10 = 10mW (recommended). Also sets RTTY power
+#define FSK_POWER 10          // FSK Power in dBm, Default 10, valid between 2 and 17. 10 = 10mW (recommended). *Sets RTTY power
 
 
 /***********************************************************************************
@@ -36,27 +36,22 @@
 * Change when needed
 * Default RTTY setting is: 7,N,2 at 100 Baud.
 ************************************************************************************/
-#define RTTY_ENABLED false             // Set to true if you want RTTY transmissions (You can use Both LoRa and RTTY or only one of the two) 
-#define RTTY_PAYLOAD_ID  "RTTY_ID"    // Payload ID for RTTY protocol
+#define RTTY_ENABLED true             // Set to true if you want RTTY transmissions (You can use Both LoRa and RTTY or only one of the two) 
+#define RTTY_PAYLOAD_ID  "KW-BCK1"    // Payload ID for RTTY protocol
 #define RTTY_FREQUENCY  434.113       // Can be different from LoRa frequency
 #define RTTY_SHIFT 610                //  NOTE: RTTY frequency shift will be rounded to the nearest multiple of module frequency step size. SX127x/RFM9x - 61 Hz
 #define RTTY_BAUD 50                  // Baud rate
 #define RTTY_STOPBITS 2
 #define RTTY_PREFIX "$$$$$"          
 
-// RTTY encoding modes (leave this unchanged)
-#define RTTY_ASCII 0                 // 7 data bits 
-#define RTTY_ASCII_EXTENDED 1        // 8 data bits
-#define RTTY_ITA2  2                 // Baudot 
-
-#define RTTY_MODE RTTY_ASCII_EXTENDED // RTTY encoding mode
+#define RTTY_MODE RADIOLIB_ASCII_EXTENDED // RTTY encoding mode (RADIOLIB_ITA2 (5bits), RADIOLIB_ASCII_EXTENDED (8bits) or RADIOLIB_ASCII (7bits))
 
 #define RTTY_REPEATS 3 // number of RTTY transmits during a cycle
 
 // Idle carrier in ms before sending actual RTTY string. 
 // Set to a low value (i.e. 1000 or lower) if you have a very frequency stable signal
 // Set to a high value (i.e. 5000 or even higher) if you have a hard time to tune the signal
-#define RTTY_IDLE_TIME 2500          
+#define RTTY_IDLE_TIME 2000          
  
  
 /***********************************************************************************
@@ -65,7 +60,7 @@
 * Change when needed
 ************************************************************************************/
 #define LORA_ENABLED true            // Set to true if you want LoRa transmissions (You can use Both LoRa and RTTY or only one of the two)
-#define LORA_PAYLOAD_ID "KW-BCK"   // Payload ID for LoRa protocol
+#define LORA_PAYLOAD_ID "KW-BCK2"   // Payload ID for LoRa protocol
 //#define LORA_FREQUENCY 434.562      // Can be different from RTTY frequency
 #define LORA_FREQUENCY 433.650      // Can be different from RTTY frequency
 #define LORA_PREFIX "$$"             // Some older LoRa software does not accept a prefix of more than 2x "$"
@@ -104,16 +99,16 @@
 * Change when needed
 ************************************************************************************/
 #define FSK4_ENABLED true            // Set to true if you want FSK4 transmissions
-#define FSK4_PAYLOAD_ID 333      // Int16 Payload ID for FSK4 protocol
-#define FSK4_FREQ         434.200
-#define FSK4_BAUD       100
-#define FSK4_SPACING    270          // 270 results in a shift of 244 Hz due to the PLL Resolution of the SX127x
+#define FSK4_PAYLOAD_ID 333      // Int16 Payload ID for FSK4 protocol, 256 = test for v2 mode
+#define FSK4_FREQ       434.200
+#define FSK4_BAUD       50           // 100 baud timing is slightly out at 1.xMhz, fine at 14Mhz, 50 baud works at 1.xMhz
+#define FSK4_SPACING    244          // 270 results in a shift of 244 Hz due to the PLL Resolution of the SX127x
 #define FSK4_POWER 10                // in dBm between 2 and 17. 10 = 10mW (recommended)
 #define FSK4_CURRENTLIMIT 80         // in mA, accepted range is 0 (protection disabled), 45 - 240 mA
 
-#define FSK4_IDLE_TIME 1000         // Idle carrier in ms before sending actual FSK4 string.
+#define FSK4_IDLE_TIME 2000         // Idle carrier in ms before sending actual FSK4 string.
 
-#define FSK4_REPEATS 300              // number of FSK4 transmits during a cycle
+#define FSK4_REPEATS 3              // number of FSK4 transmits during a cycle
 
 
 /***********************************************************************************
@@ -128,7 +123,7 @@
                                 // The tracker will only go to sleep if there are more than X satellites visible   
 #define TIME_TO_SLEEP  10       // This is the number in seconds out of TX_LOOP_TIME that the CPU is in sleep. Only valid when USE_DEEP_SLEEP = true
 
-#define TX_LOOP_TIME   20       // When USE_DEEP_SLEEP=false: Number in seconds between transmits
+#define TX_LOOP_TIME   30       // When USE_DEEP_SLEEP=false: Number in seconds between transmits
                                 // When USE_DEEP_SLEEP=true : Time between transmits is TIME_TO_SLEEP+TX_LOOP_TIME+time it takes to transmit the data
                                 // When USE_DEEP_SLEEP=true TX_LOOP_TIME needs to be long enough to regain a GPS fix.
 
@@ -144,7 +139,7 @@
 // Comment out the pins you use for your sensors or leds. 
 // Set pin value to a valid value.
 #define POWER_PIN1     PIN_PA0
-// #define POWER_PIN2     4
+// #define POWER_PIN2     -1
 // #define POWER_PIN3     -1
 // #define POWER_PIN4     -1
 // #define POWER_PIN5     -1
@@ -155,11 +150,12 @@
 *  
 * Comment DEVMODE out if you experience out-of-memory errors.
 ************************************************************************************/
-#define DEVMODE // Development mode. Uncomment to enable for debugging and see debug info on the serial monitor
+//#define DEVMODE // Development mode. Uncomment to enable for debugging and see debug info on the serial monitor
 #define DBGBAUD 115200
 #define SERIALDBG Serial
-#define LED PIN_PA3
+#define LED PIN_PA3  // Basic Tracker LED is PA3
 
+//#define DEVTIMING PIN_PB5 // Enable to test FSK4 Timing
        
 /***********************************************************************************
 * GPS SETTINGS
@@ -179,7 +175,7 @@
 
 
 /***********************************************************************************
-* SONDEHUB EXTRA FIELDS SETTINGS
+* SONDEHUB EXTRA FIELDS SETTINGS (only used by LoRa)
 *  
 * For displaying extra fields at amateur.sondehub.org, we need to define which fields are
 * in the telemetry after the lat, lon, alt fields
@@ -258,7 +254,7 @@
 *  
 * Uncomment this if you want to reset the counters for LoRa and RTTY set back to 0.
 ************************************************************************************/
-// #define RESET_TRANS_COUNTERS
+//#define RESET_TRANS_COUNTERS
 
 
 /***********************************************************************************
@@ -268,6 +264,7 @@
 ************************************************************************************/
 #ifdef DEVMODE 
   #define DBGBGN(...)   SERIALDBG.begin(__VA_ARGS__)
+  #define DBGEND(...)    SERIALDBG.end(__VA_ARGS__)
   #define DBGFLUSH(...)  SERIALDBG.flush()
   #define DBGPRNTST(...)  \
         SERIALDBG.print(__func__); \
@@ -285,6 +282,7 @@
   #define DBGPRNTLN(...) SERIALDBG.println(__VA_ARGS__)
 #else
   #define DBGBGN(...)
+  #define DBGEND(...)
   #define DBGFLUSH(...)
   #define DBGPRNTST(...)
   #define DBGPRNTSTLN(...)  

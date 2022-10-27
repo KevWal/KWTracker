@@ -200,7 +200,7 @@ int createFSK4TXLine(uint16_t PayloadID, unsigned long aCounter){
 
   struct HorusBinaryPacketV2 BinaryPacketV2;
 
-  BinaryPacketV2.PayloadID = PayloadID; // 0 = 4FSKTEST-V2. Refer https://github.com/projecthorus/horusdemodlib/blob/master/payload_id_list.txt
+  BinaryPacketV2.PayloadID = PayloadID; // 255 = 4FSKTEST-V2. Refer https://github.com/projecthorus/horusdemodlib/blob/master/payload_id_list.txt
   BinaryPacketV2.Counter = aCounter;
   BinaryPacketV2.Hours = UGPS.Hours;
   BinaryPacketV2.Minutes = UGPS.Minutes;
@@ -210,7 +210,7 @@ int createFSK4TXLine(uint16_t PayloadID, unsigned long aCounter){
   BinaryPacketV2.Altitude = UGPS.Altitude;
   BinaryPacketV2.Speed = UGPS.Speed;
 
-  //DBGPRNTST(F("BattVoltageRaw: ")); DBGPRNTLN(readExternalVoltage());
+  DBGPRNTST(F("BattVoltageRaw: ")); DBGPRNTLN(readExternalVoltage());
   // BattVoltage 0 = 0.5v, 255 = 2.0V, linear steps in-between
   BinaryPacketV2.BattVoltage = (uint8_t) ((min(readExternalVoltage(),2) - 0.5f) * 170); // 255 / 1.5v = 170
   DBGPRNTST(F("EncodedBattVoltage: ")); DBGPRNTLN(BinaryPacketV2.BattVoltage);

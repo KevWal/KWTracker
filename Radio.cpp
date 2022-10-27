@@ -133,12 +133,12 @@ void sendRTTY(const char* TxLine)
   rtty.idle();     
   delay(RTTY_IDLE_TIME);
    
-  DBGPRNTST(F("Sending RTTY ... "));
+  DBGPRNTST(F("Sending RTTY ... ")); DBGFLUSH(); DBGEND();
    
   // Send the string 
   int16_t charsSent = rtty.println(TxLine); 
   
-  DBGPRNT(F("chars sent: ")); DBGPRNTLN(charsSent);
+  DBGBGN(DBGBAUD); DBGPRNT(F("chars sent: ")); DBGPRNTLN(charsSent);
 
   // Enable the GPS again.  
   SERIALGPS.begin(GPSBAUD);
@@ -165,13 +165,16 @@ void sendLoRa(const char* TxLine)
 //===============================================================================
 void sendFSK4(uint8_t* codedbuffer, size_t coded_len)
 {
+  // Disable the GPS serial temporarily 
+  SERIALGPS.end();
+
   setupFSK4();
 
   // send out idle condition for 1000 ms
   fsk4_idle(&radio);
   delay(FSK4_IDLE_TIME);
 
-  DBGPRNTST(F("Sending FSK4 ... "));
+  DBGPRNTST(F("Sending FSK4 ... ")); DBGFLUSH();
    
   // Send the string
   //int16_t state = XXX(TxLine); // Send till \0
@@ -179,6 +182,9 @@ void sendFSK4(uint8_t* codedbuffer, size_t coded_len)
   fsk4_write(&radio, codedbuffer, coded_len);
   //if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F("success!")); else { DBGPRNT(F("failed, code: ")); DBGPRNTLN(state); }
   DBGPRNTLN(F("done."));
+
+  // Enable the GPS again.  
+  SERIALGPS.begin(GPSBAUD);
 }
 
 

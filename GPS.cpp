@@ -12,7 +12,6 @@
 
 #include <TinyGPS++.h>
 
-
 // The TinyGPS++ object
 TinyGPSPlus gps;
 
@@ -35,7 +34,7 @@ void smartDelay(unsigned long ms)
   {
     // Read from GPS and feed into TinyGPS++
     if (SERIALGPS.available()) gps.encode(SERIALGPS.read());
-    // Toggle LED fast if less than 4 sats, slow if more than 4 sats.
+    // Toggle LED fast if less than X sats, slow if more than 4 sats.
     if (gps.satellites.value() < 5 && gps.altitude.meters() < 1000) digitalWrite(LED, millis()%150>75);
     if (gps.satellites.value() >= 5 && gps.altitude.meters() < 1000) digitalWrite(LED, millis()%1000>500);
   } while (millis() - start < ms);

@@ -11,6 +11,7 @@
 #define PEDESTRIAN 3
 #define AIRBORNE 6 
 
+
 void checkGPS();
 
 void smartDelay(unsigned long ms);
