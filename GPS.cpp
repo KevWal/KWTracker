@@ -37,6 +37,7 @@ void smartDelay(unsigned long ms)
     // Toggle LED fast if less than X sats, slow if more than 4 sats.
     if (gps.satellites.value() < 5 && gps.altitude.meters() < 1000) digitalWrite(LED, millis()%150>75);
     if (gps.satellites.value() >= 5 && gps.altitude.meters() < 1000) digitalWrite(LED, millis()%1000>500);
+    digitalWrite(DEVTIMING, !digitalRead(DEVTIMING));
   } while (millis() - start < ms);
   digitalWrite(LED, LOW);
   DBGPRNT(gps.charsProcessed()); DBGPRNT(F(" chars read, ")); DBGPRNT(gps.passedChecksum()); DBGPRNTLN(F(" valid sentances."));

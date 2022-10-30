@@ -1,3 +1,4 @@
+#include "Arduino.h"
 // Radio.cpp
 
 /***********************************************************************************
@@ -165,8 +166,9 @@ void sendLoRa(const char* TxLine)
 //===============================================================================
 void sendFSK4(uint8_t* codedbuffer, size_t coded_len)
 {
-  // Disable the GPS serial temporarily 
+  // Disable gps serial temporarily 
   SERIALGPS.end();
+  
 
   setupFSK4();
 
@@ -174,16 +176,15 @@ void sendFSK4(uint8_t* codedbuffer, size_t coded_len)
   fsk4_idle(&radio);
   delay(FSK4_IDLE_TIME);
 
-  DBGPRNTST(F("Sending FSK4 ... ")); DBGFLUSH();
+  DBGPRNTST(F("Sending FSK4 ... ")); DBGFLUSH(); DBGEND();
    
   // Send the string
-  //int16_t state = XXX(TxLine); // Send till \0
-  fsk4_preamble(&radio, 8);
+  //fsk4_preamble(&radio, 8);
   fsk4_write(&radio, codedbuffer, coded_len);
   //if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F("success!")); else { DBGPRNT(F("failed, code: ")); DBGPRNTLN(state); }
-  DBGPRNTLN(F("done."));
+  DBGBGN(DBGBAUD); DBGPRNTLN(F("done."));
 
-  // Enable the GPS again.  
+  // Enable gps serial again.  
   SERIALGPS.begin(GPSBAUD);
 }
 

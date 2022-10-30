@@ -1,12 +1,44 @@
+#include "Arduino.h"
 // MFSK Modulation
-
+#include "Settings.h"
 #include "Horus_L1.h"
 
 uint32_t fsk4_base = 0, fsk4_baseHz = 0;
 uint32_t fsk4_shift = 0, fsk4_shiftHz = 0;
-uint32_t fsk4_bitDuration = 0;
+//uint32_t fsk4_bitDuration = 0;
 uint32_t fsk4_tones[4];
 uint32_t fsk4_tonesHz[4];
+
+volatile bool proceed = false; // ISR timing flag
+
+// ISR timer based tx routines
+
+// Set up Timer1 for interrupts every symbol period
+void isr_timer1_start() {
+  noInterrupts();                                
+  TCCR1A = 0;                                    // Set entire TCCR1A register to 0 = Disconnect interrupt output pins, sets normal waveform mode. We're just using Timer1 as a counter.
+  TCNT1  = 0;                                    // Initialize counter value to 0.
+  TCCR1B = (1 << CS11) |                         // Set CS11 bit to set prescale to /8
+    (1 << WGM12);                                // turn on CTC mode.
+  //OCR1A = 4607;                                  // Set up interrupt trigger count = (mhz / (prescaler * baud)) - 1
+  OCR1A = (F_CPU / (8 * FSK4_BAUD)) - 1;          // Set up interrupt trigger count = (mhz / (prescaler * baud)) - 1
+  TIMSK1 = (1 << OCIE1A);                        // Enable timer compare interrupt.
+  interrupts();                                  // Re-enable interrupts.
+}
+
+// Disable Timer1
+void isr_timer1_stop() {
+  noInterrupts();
+  TCCR1B = 0x00;
+  interrupts();
+}
+
+// Timer interrupt vector. This toggles the variable we use to gate each column of output to ensure accurate timing. 
+// Called whenever Timer1 hits the count set in interruptSetup().
+ISR(TIMER1_COMPA_vect){
+  proceed = true;
+} 
+
 
 
 int16_t fsk4_setup(PhysicalLayer* phy, float base, uint32_t shift, uint16_t rate){
@@ -15,7 +47,8 @@ int16_t fsk4_setup(PhysicalLayer* phy, float base, uint32_t shift, uint16_t rate
   fsk4_shiftHz = shift;
 
   // calculate duration of 1 bit
-  fsk4_bitDuration = (uint32_t)1000000/rate;
+  //KW replaced by Interupt drive code
+  //fsk4_bitDuration = (uint32_t)1000000/rate;
 
   // calculate module carrier frequency resolution
   uint32_t step = round(phy->getFreqStep());
@@ -54,21 +87,31 @@ int16_t fsk4_transmitDirect(PhysicalLayer* phy, uint32_t freq) {
 
 void fsk4_tone(PhysicalLayer* phy, uint8_t i) {
   uint32_t start = micros();
+
+  proceed = false; while (!proceed) { yield(); } // Wait for the right time to start the next tone
+
 #ifdef DEVTIMING
-  PINB = 0b00000111; //digitalWrite(DEVTIMING, !digitalRead(DEVTIMING));
+  PINB = 0b00010000; //digitalWrite(DEVTIMING, !digitalRead(DEVTIMING));
 #endif
   fsk4_transmitDirect(phy, fsk4_base + fsk4_tones[i]);
-  //delayMicroseconds(fsk4_bitDuration);
-  while(micros() - start < fsk4_bitDuration) {
-    yield();
-  }
+
+  //delayMicroseconds(wait);
+  //while(micros() - start < fsk4_bitDuration) {
+  //  yield();
+  //}
+
 }
 
 void fsk4_idle(PhysicalLayer* phy){
-    fsk4_tone(phy, 0);
+    //fsk4_tone(phy, 0);
+    fsk4_transmitDirect(phy, fsk4_base + fsk4_tones[0]);
 }
 
 void fsk4_standby(PhysicalLayer* phy){
+    proceed = false; while (!proceed) {yield();} // Make sure the last tone lasts the required amount of time.
+#ifdef DEVTIMING
+  PINB = 0b00010000; //digitalWrite(DEVTIMING, !digitalRead(DEVTIMING));
+#endif
     phy->standby();
 }
 
@@ -97,9 +140,17 @@ void fsk4_preamble(PhysicalLayer* phy, uint8_t len){
 
 size_t fsk4_write(PhysicalLayer* phy, uint8_t* buff, size_t len){
   size_t n = 0;
+
+  // Use timer 1 interupt to get best timing possible for each transmission
+  isr_timer1_start();
+
+  fsk4_preamble(phy, 8);
   for(size_t i = 0; i < len; i++) {
     n += fsk4_writebyte(phy, buff[i]);
   }
   fsk4_standby(phy);
+
+  isr_timer1_stop();
+
   return(n);
 }
