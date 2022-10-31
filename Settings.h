@@ -100,7 +100,8 @@
 ************************************************************************************/
 #define FSK4_ENABLED true            // Set to true if you want FSK4 transmissions
 #define FSK4_PAYLOAD_ID 333      // Int16 Payload ID for FSK4 protocol, 256 = test for v2 mode
-#define FSK4_FREQ       434.200
+//#define FSK4_FREQ       434.200
+#define FSK4_FREQ       434.340
 #define FSK4_BAUD       50           // 100 baud timing is slightly out at 1.xMhz, fine at 14Mhz, 50 baud works at 1.xMhz
 #define FSK4_SPACING    244          // 270 results in a shift of 244 Hz due to the PLL Resolution of the SX127x
 #define FSK4_POWER 10                // in dBm between 2 and 17. 10 = 10mW (recommended)
@@ -121,7 +122,7 @@
 // Allow time for the GPS to re-acquire a fix when using sleep mode!
 #define USE_DEEP_SLEEP true     // Put the ATMEGA chip to deep sleep while not transmitting. set to true or false.
                                 // The tracker will only go to sleep if there are more than X satellites visible   
-#define TIME_TO_SLEEP  10       // This is the number in seconds out of TX_LOOP_TIME that the CPU is in sleep. Only valid when USE_DEEP_SLEEP = true
+#define TIME_TO_SLEEP  10      // This is the number in seconds out of TX_LOOP_TIME that the CPU is in sleep. Only valid when USE_DEEP_SLEEP = true
 
 #define TX_LOOP_TIME   30       // When USE_DEEP_SLEEP=false: Number in seconds between transmits
                                 // When USE_DEEP_SLEEP=true : Time between transmits is TIME_TO_SLEEP+TX_LOOP_TIME+time it takes to transmit the data
@@ -150,12 +151,13 @@
 *  
 * Comment DEVMODE out if you experience out-of-memory errors.
 ************************************************************************************/
-//#define DEVMODE // Development mode. Uncomment to enable for debugging and see debug info on the serial monitor
+#define DEVMODE // Development mode. Uncomment to enable for debugging and see debug info on the serial monitor
 #define DBGBAUD 115200
 #define SERIALDBG Serial
 #define LED PIN_PA3  // Basic Tracker LED is PA3
 
-//#define DEVTIMING PIN_PB5 // Enable to test FSK4 Timing
+// Port and Pint manually set in code!
+//#define DEVTIMING PIN_PB4 // Enable to test FSK4 Timing
        
 /***********************************************************************************
 * GPS SETTINGS

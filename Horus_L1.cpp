@@ -1,5 +1,6 @@
-#include "Arduino.h"
 // MFSK Modulation
+
+#include "Arduino.h"
 #include "Settings.h"
 #include "Horus_L1.h"
 
@@ -12,6 +13,15 @@ uint32_t fsk4_tonesHz[4];
 volatile bool proceed = false; // ISR timing flag
 
 // ISR timer based tx routines
+
+
+// Prescaler of 8 works for my scenarios:
+// Clock Mhz	  50	        100	        300 Baud
+// 1,843,200    4,607.00    2,303.00    767.00 
+// 14,745,600   36,863.00   18,431.00   6,143.00 
+// 16,000,000   39,999.00   19,999.00   6,665.67
+// Timer1 max = 65k
+
 
 // Set up Timer1 for interrupts every symbol period
 void isr_timer1_start() {

@@ -67,10 +67,12 @@ void setup()
   DBGPRNTSTLN(F("Start"));
 
   // Setup LED
+#ifdef LED
   pinMode(LED, OUTPUT);
   digitalWrite(LED, LOW);
+#endif
 
-#if defined(RESET_TRANS_COUNTERS)
+#ifdef RESET_TRANS_COUNTERS
   resetTransmissionCounters();
 #endif
 
@@ -87,7 +89,7 @@ void setup()
 
 #ifdef DEVTIMING
   pinMode(DEVTIMING, OUTPUT);
-#endif // DEVTIMING
+#endif
 
 }
 
@@ -129,9 +131,7 @@ void loop()
       } // if (RTTY_ENABLED)
 
       // Delay in milliseconds between rtty and lora. You can change this
-      if (UGPS.Altitude < 1000) digitalWrite(LED, HIGH);
       delay(1000);
-      digitalWrite(LED, LOW);
      
       // Send LoRa 
       if (LORA_ENABLED)
@@ -147,9 +147,7 @@ void loop()
       } // if (LORA_ENABLED)
 
       // Delay in milliseconds between lora and FSK4. You can change this
-      if (UGPS.Altitude < 1000) digitalWrite(LED, HIGH);
       delay(1000);
-      digitalWrite(LED, LOW);
 
       // Send Horus FSK4
       if (FSK4_ENABLED)
@@ -181,8 +179,8 @@ void loop()
           // Write the FSK4 counter to EEPROM at address 0x08
           EEPROMWritelong(0x08, FSK4Counter);
         }
+      } // if (FSK4_ENABLED)
 
-      }
 
       // Go to sleep after transmissions
       if (USE_DEEP_SLEEP)
