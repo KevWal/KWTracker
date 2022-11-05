@@ -12,13 +12,51 @@
 #include "Settings.h"
 #include "Horus_L1.h"
 
-#include <RadioLib.h>
+// My version of RadioLib using the proceed flag
+// Need to #define RADIOLIB_INTERRUPT_TIMING in BuildOpt.h
+#include <RadioLibKW.h>
 
 // Change 'SX1278' in the line below to 'SX1276' if you have a SX1276 module.
 SX1278 radio = new Module(PIN_NSS, PIN_DIO0, PIN_RESET, PIN_DIO1);
 
 // create RTTY client instance using the radio module
 RTTYClient rtty(&radio);
+
+//===============================================================================
+// ISR timer based tx routines
+
+// Prescaler of 8 works for my scenarios:
+// Clock Mhz	  50	        100	        300 Baud
+// 1,843,200    4,607.00    2,303.00    767.00 
+// 14,745,600   36,863.00   18,431.00   6,143.00 
+// 16,000,000   39,999.00   19,999.00   6,665.67
+// Timer1 max = 65k
+
+// Set up Timer1 for interrupts every symbol period
+void isr_timer1_start(uint16_t baud) {
+  noInterrupts();                                
+  TCCR1A = 0;                                    // Set entire TCCR1A register to 0 = Disconnect interrupt output pins, sets normal waveform mode. We're just using Timer1 as a counter.
+  TCNT1  = 0;                                    // Initialize counter value to 0.
+  TCCR1B = (1 << CS11) |                         // Set CS11 bit to set prescale to /8
+    (1 << WGM12);                                // turn on CTC mode.
+  //OCR1A = 4607;                                  // Set up interrupt trigger count = (mhz / (prescaler * baud)) - 1
+  OCR1A = (F_CPU / (8 * baud)) - 1;          // Set up interrupt trigger count = (mhz / (prescaler * baud)) - 1
+  TIMSK1 = (1 << OCIE1A);                        // Enable timer compare interrupt.
+  interrupts();                                  // Re-enable interrupts.
+}
+
+// Disable Timer1
+void isr_timer1_stop() {
+  noInterrupts();
+  TCCR1B = 0x00;
+  interrupts();
+}
+
+// Timer interrupt vector. This toggles the variable we use to gate each column of output to ensure accurate timing. 
+// Called whenever Timer1 hits the count set in interruptSetup().
+ISR(TIMER1_COMPA_vect){
+  proceed = true;
+} 
 
 
 //===============================================================================
@@ -135,9 +173,16 @@ void sendRTTY(const char* TxLine)
   delay(RTTY_IDLE_TIME);
    
   DBGPRNTST(F("Sending RTTY ... ")); DBGFLUSH(); DBGEND();
-   
+
+  // Use timer 1 interupt to get best timing possible for each tone
+  isr_timer1_start(RTTY_BAUD);
+
   // Send the string 
   int16_t charsSent = rtty.println(TxLine); 
+
+  rtty.standby();
+
+  isr_timer1_stop();
   
   DBGBGN(DBGBAUD); DBGPRNT(F("chars sent: ")); DBGPRNTLN(charsSent);
 
@@ -169,7 +214,6 @@ void sendFSK4(uint8_t* codedbuffer, size_t coded_len)
   // Disable gps serial temporarily 
   SERIALGPS.end();
   
-
   setupFSK4();
 
   // send out idle condition for 1000 ms
@@ -178,10 +222,15 @@ void sendFSK4(uint8_t* codedbuffer, size_t coded_len)
 
   DBGPRNTST(F("Sending FSK4 ... ")); DBGFLUSH(); DBGEND();
    
+  // Use timer 1 interupt to get best timing possible for each tone
+  isr_timer1_start(FSK4_BAUD);
+
   // Send the string
-  //fsk4_preamble(&radio, 8);
   fsk4_write(&radio, codedbuffer, coded_len);
   //if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F("success!")); else { DBGPRNT(F("failed, code: ")); DBGPRNTLN(state); }
+
+  isr_timer1_stop();
+
   DBGBGN(DBGBAUD); DBGPRNTLN(F("done."));
 
   // Enable gps serial again.  
