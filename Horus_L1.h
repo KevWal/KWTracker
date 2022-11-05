@@ -1,9 +1,13 @@
+// Horus_L1.h
+
 #ifndef __HORUS_FSK4__
 #define __HORUS_FSK4__
 
 // My version of RadioLib using the proceed flag
 // Need to #define RADIOLIB_INTERRUPT_TIMING in BuildOpt.h
 #include <RadioLibKW.h>
+
+#include <Arduino.h>
 
 // MFSK Modulation
 

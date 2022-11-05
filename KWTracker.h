@@ -3,7 +3,6 @@
 #ifndef KWTRACKER_H
 #define KWTRACKER_H
 
-#include "Settings.h"
 #include <Arduino.h>
 
 /***********************************************************************************

@@ -7,7 +7,10 @@
 * library headers, with the headers in each section sorted alphabetically.
 ************************************************************************************/
 #include "ADC.h"
+
 #include "Settings.h"
+
+#include <Arduino.h>
 
 
 //===============================================================================

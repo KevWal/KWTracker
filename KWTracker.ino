@@ -26,6 +26,8 @@
 * #include user defined headers, followed by 3rd party library headers, then standard 
 * library headers, with the headers in each section sorted alphabetically.
 ************************************************************************************/
+#include "KWTracker.h"
+
 #include "ADC.h"
 #include "GPS.h"
 #include "Misc.h"
@@ -33,7 +35,6 @@
 #include "Horus_L2.h"
 #include "Sleep.h"
 #include "Settings.h"
-#include "KWTracker.h"
 
 #include <Arduino.h>
 

@@ -3,9 +3,6 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include "Settings.h"
-#include "KWTracker.h"
-
 #include <Arduino.h>
 
 void createRTTYTXLine(const char *PayloadID, unsigned long aCounter, const char *aPrefix);
@@ -23,9 +20,6 @@ void EEPROMWritelong(int address, long value);
 long EEPROMReadlong(long address);
 
 void resetTransmissionCounters();
-
-extern char Sentence[SENTENCE_LENGTH];
-extern TGPS UGPS;
 
 // Horus v2 Mode 1 (32-byte) Binary Packet Struct
 struct HorusBinaryPacketV2

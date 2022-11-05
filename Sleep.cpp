@@ -19,7 +19,7 @@
 int teller = 0;
 
 //===============================================================================
-void setupSleep(void)
+void setupSleep()
 {  
   // Setup the watchdog timer to run an interrupt which
   // wakes the Arduino from sleep every 1 second.

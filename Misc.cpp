@@ -1,4 +1,3 @@
-#include "Print.h"
 // Misc.cpp
 
 /***********************************************************************************
@@ -8,12 +7,17 @@
 * library headers, with the headers in each section sorted alphabetically.
 ************************************************************************************/
 #include "Misc.h"
+
 #include "ADC.h"
 #include "KWTracker.h"
 #include "Radio.h"
 
+#include <Print.h>
 #include <util/crc16.h>
 #include <EEPROM.h>
+
+extern TGPS UGPS;
+extern char Sentence[SENTENCE_LENGTH];
 
 /***********************************************************************************
 * The function CreateTXLine generates two payload sentences to transmit. One

@@ -3,8 +3,6 @@
 #ifndef GPS_H
 #define GPS_H
 
-#include "KWTracker.h"
-#include "Settings.h"
 #include <Arduino.h>
 
 #define UNKNOWN 0
@@ -23,8 +21,6 @@ void printGPSData();
 void sendUBX(unsigned char *Message, int Length);
 
 void setDesiredMode(uint8_t aDesiredMode);
-
-extern TGPS UGPS;
 
 //If SerialGPS is defined then we are using a Hardware serial port and dont need Software Serial
 #ifndef SERIALGPS

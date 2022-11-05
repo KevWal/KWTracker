@@ -1,4 +1,3 @@
-#include "Arduino.h"
 // Radio.cpp
 
 /***********************************************************************************
@@ -8,6 +7,7 @@
 * library headers, with the headers in each section sorted alphabetically.
 ************************************************************************************/
 #include "Radio.h"
+
 #include "KWTracker.h"
 #include "Settings.h"
 #include "Horus_L1.h"
@@ -15,6 +15,8 @@
 // My version of RadioLib using the proceed flag
 // Need to #define RADIOLIB_INTERRUPT_TIMING in BuildOpt.h
 #include <RadioLibKW.h>
+
+#include <Arduino.h>
 
 // Change 'SX1278' in the line below to 'SX1276' if you have a SX1276 module.
 SX1278 radio = new Module(PIN_NSS, PIN_DIO0, PIN_RESET, PIN_DIO1);

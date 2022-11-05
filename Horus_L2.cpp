@@ -50,12 +50,13 @@
 
 \*---------------------------------------------------------------------------*/
 
+#include "Horus_L2.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include "Horus_L2.h"
 
 #ifdef HORUS_L2_UNITTEST
 #define HORUS_L2_RX

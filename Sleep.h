@@ -5,7 +5,7 @@
 
 #include <Arduino.h>
 
-void setupSleep(void);
+void setupSleep();
 
 void mySleep();
 

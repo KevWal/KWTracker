@@ -1,8 +1,17 @@
-// MFSK Modulation
+// Horus_L1.cpp
 
-#include "Arduino.h"
-#include "Settings.h"
+/***********************************************************************************
+* #includes
+*
+* #include user defined headers, followed by 3rd party library headers, then standard 
+* library headers, with the headers in each section sorted alphabetically.
+************************************************************************************/
 #include "Horus_L1.h"
+
+#include "Settings.h"
+
+#include <Arduino.h>
+
 
 uint32_t fsk4_base = 0, fsk4_baseHz = 0;
 uint32_t fsk4_shift = 0, fsk4_shiftHz = 0;

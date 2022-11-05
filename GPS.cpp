@@ -7,6 +7,7 @@
 * library headers, with the headers in each section sorted alphabetically.
 ************************************************************************************/
 #include "GPS.h"
+
 #include "KWTracker.h"
 #include "Settings.h"
 
@@ -14,6 +15,8 @@
 
 // The TinyGPS++ object
 TinyGPSPlus gps;
+
+extern TGPS UGPS;
 
 /*********************************************************************************************************************************/
 void checkGPS()
