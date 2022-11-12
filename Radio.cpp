@@ -41,8 +41,8 @@ void isr_timer1_start(uint16_t baud) {
   TCNT1  = 0;                                    // Initialize counter value to 0.
   TCCR1B = (1 << CS11) |                         // Set CS11 bit to set prescale to /8
     (1 << WGM12);                                // turn on CTC mode.
-  //OCR1A = 4607;                                  // Set up interrupt trigger count = (mhz / (prescaler * baud)) - 1
-  OCR1A = (F_CPU / (8 * baud)) - 1;          // Set up interrupt trigger count = (mhz / (prescaler * baud)) - 1
+  //OCR1A = 4607;                                // Set up interrupt trigger count = (mhz / (prescaler * baud)) - 1
+  OCR1A = (F_CPU / (8 * baud)) - 1;              // Set up interrupt trigger count = (mhz / (prescaler * baud)) - 1
   TIMSK1 = (1 << OCIE1A);                        // Enable timer compare interrupt.
   interrupts();                                  // Re-enable interrupts.
 }
@@ -169,15 +169,15 @@ void sendRTTY(const char* TxLine)
   SERIALGPS.end();
 
   setupRTTY();
-   
+
+  // Use timer 1 interupt to get best timing possible for each tone
+  isr_timer1_start(RTTY_BAUD);
+
   // Send only idle carrier to let people get their tuning right
   rtty.idle();     
   delay(RTTY_IDLE_TIME);
    
   DBGPRNTST(F("Sending RTTY ... ")); DBGFLUSH(); DBGEND();
-
-  // Use timer 1 interupt to get best timing possible for each tone
-  isr_timer1_start(RTTY_BAUD);
 
   // Send the string 
   int16_t charsSent = rtty.println(TxLine); 

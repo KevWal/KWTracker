@@ -216,7 +216,7 @@ int createFSK4TXLine(uint16_t PayloadID, unsigned long aCounter){
 
   DBGPRNTST(F("BattVoltageRaw: ")); DBGPRNTLN(readExternalVoltage());
   // BattVoltage 0 = 0.5v, 255 = 2.0V, linear steps in-between
-  BinaryPacketV2.BattVoltage = (uint8_t) ((min(readExternalVoltage(),2) - 0.5f) * 170); // 255 / 1.5v = 170
+  BinaryPacketV2.BattVoltage = (uint8_t) (readExternalVoltage() * 51); // 255 = 5.0v
   DBGPRNTST(F("EncodedBattVoltage: ")); DBGPRNTLN(BinaryPacketV2.BattVoltage);
 
   BinaryPacketV2.Sats = UGPS.Satellites;
@@ -229,11 +229,11 @@ int createFSK4TXLine(uint16_t PayloadID, unsigned long aCounter){
 
   // Custom section. This is an example only, and the 9 bytes in this section can be used in other
   // ways. Refer here for details: https://github.com/projecthorus/horusdemodlib/wiki/5-Customising-a-Horus-Binary-v2-Packet
-  BinaryPacketV2.dummy1 = 1;        // uint8
-  BinaryPacketV2.dummy2 = 1.23456;  // float32
-  BinaryPacketV2.dummy3 = 100;      // uint8 - interpreted as a battery voltage 0-5V
-  BinaryPacketV2.dummy4 = 123;      // uint8 - interpreted as a fixed-point value (div/10)
-  BinaryPacketV2.dummy5 = 1234;     // uint16 - interpreted as a fixed-point value (div/100)
+  BinaryPacketV2.dummy1 = 0;        // uint8
+  BinaryPacketV2.dummy2 = 0.0;  // float32
+  BinaryPacketV2.dummy3 = 0;      // uint8 - interpreted as a battery voltage 0-5V
+  BinaryPacketV2.dummy4 = 0;      // uint8 - interpreted as a fixed-point value (div/10)
+  BinaryPacketV2.dummy5 = 0;     // uint16 - interpreted as a fixed-point value (div/100)
 
   BinaryPacketV2.Checksum = (uint16_t) crc16((unsigned char*) &BinaryPacketV2, sizeof(BinaryPacketV2) - sizeof(BinaryPacketV2.Checksum));
   DBGPRNTST(F("Checksum: ")); DBGPRNTLN(BinaryPacketV2.Checksum, HEX);

@@ -100,9 +100,8 @@
 ************************************************************************************/
 #define FSK4_ENABLED true            // Set to true if you want FSK4 transmissions
 #define FSK4_PAYLOAD_ID 333      // Int16 Payload ID for FSK4 protocol, 256 = test for v2 mode
-//#define FSK4_FREQ       434.200
 #define FSK4_FREQ       434.340
-#define FSK4_BAUD       50           // 100 baud timing is slightly out at 1.xMhz, fine at 14Mhz, 50 baud works at 1.xMhz
+#define FSK4_BAUD       100
 #define FSK4_SPACING    244          // 270 results in a shift of 244 Hz due to the PLL Resolution of the SX127x
 #define FSK4_POWER 10                // in dBm between 2 and 17. 10 = 10mW (recommended)
 #define FSK4_CURRENTLIMIT 80         // in mA, accepted range is 0 (protection disabled), 45 - 240 mA
@@ -156,7 +155,7 @@
 #define SERIALDBG Serial
 #define LED PIN_PA3  // Basic Tracker LED is PA3
 
-// Port and Pint manually set in code!
+// Port and Pin manually set in code!
 //#define DEVTIMING PIN_PB4 // Enable to test FSK4 Timing
        
 /***********************************************************************************
