@@ -2,7 +2,7 @@
 
 This tracker code is based heavily on the work by Roel Kroes in TBTracker, but now heavily modified by me.
 
-- Power down GPS before Tx to save battery (GPS backup power still live)
+- Added Horus 4FSK Mode support
 
 - Addition of all UKHAS / HABHUB / Akerman LoRa Modes
 
@@ -19,6 +19,15 @@ like PlatformIO, as well as significantly speeding up development time as the wh
 - Added ability to use temperature from LoRa Module
 
 - Added an LED showing GPS lock status
+
+- Power down GPS before Tx to save battery (GPS backup power still live)
+
+## ToDo
+
+- Use RadioLib FSK4 code rather than my own
+
+- Use RadioLib native interupt based timing rather than my own
+
 
 
 # Original TBTracker Readme
