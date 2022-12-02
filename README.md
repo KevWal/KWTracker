@@ -26,7 +26,7 @@ like PlatformIO, as well as significantly speeding up development time as the wh
 
 - Use RadioLib FSK4 code rather than my own
 
-- Use RadioLib native interupt based timing rather than my own
+- Use RadioLib native interupt based timing rather than my own (https://github.com/jgromes/RadioLib/issues/596)
 
 
 
