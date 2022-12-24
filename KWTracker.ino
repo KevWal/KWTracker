@@ -43,9 +43,9 @@
 *  
 * Normally no change necessary
 ************************************************************************************/
-char Sentence[SENTENCE_LENGTH];
+char Sentence[SENTENCE_LENGTH]; // Buffer to store sentance to transmit
 uint8_t codedbuffer [128]; // Buffer to store an encoded binary FSK4 packet
-long RTTYCounter = 0;
+long RTTYCounter = 0;  // Sentance Counters
 long LoRaCounter = 0;
 long FSK4Counter = 0;
 unsigned long previousTX = 0;

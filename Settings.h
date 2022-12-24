@@ -28,6 +28,7 @@
 #define FSK_ENABLEOOK false   // Use OOK (On Off Keying) modulation instead of FSK. Default False
 
 #define FSK_POWER 10          // FSK Power in dBm, Default 10, valid between 2 and 17. 10 = 10mW (recommended). ***Sets RTTY & FSK4 power
+#define FSK_CURRENTLIMIT 80   // in mA, accepted range is 0 (protection disabled), 45 - 240 mA
 
 
 /***********************************************************************************

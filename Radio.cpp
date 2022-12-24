@@ -72,6 +72,13 @@ void setupFSK()
 
   int16_t state = radio.beginFSK(FSK_FREQUENCY, FSK_BITRATE, FSK_FREQDEV, FSK_RXBANDWIDTH, FSK_POWER, FSK_PREAMBLELENGTH, FSK_ENABLEOOK);
   if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
+
+  // set over current protection limit to 80 mA (accepted range is 45 - 240 mA)
+  // NOTE: set value to 0 to disable overcurrent protection
+  if (radio.setCurrentLimit(FSK_CURRENTLIMIT) == RADIOLIB_ERR_INVALID_CURRENT_LIMIT) {
+    DBGPRNTSTLN(F("Selected current limit is invalid for this module!"));
+  }
+  
 }
 
 
