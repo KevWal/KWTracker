@@ -8,9 +8,7 @@
 ************************************************************************************/
 #include "Radio.h"
 
-#include "KWTracker.h"
 #include "Settings.h"
-#include "Horus_L1.h"
 
 // Need to #define RADIOLIB_INTERRUPT_TIMING in BuildOpt.h
 #include <RadioLib.h>
@@ -22,6 +20,9 @@ SX1278 radio = new Module(PIN_NSS, PIN_DIO0, PIN_RESET, PIN_DIO1);
 
 // create RTTY client instance using the radio module
 RTTYClient rtty(&radio);
+
+// create FSK4 client instance using the FSK module
+FSK4Client fsk4(&radio);
 
 //===============================================================================
 // ISR timer based tx routines
@@ -127,13 +128,13 @@ void setupLoRa()
 // Initialize the SX1278 for Horus FSK4
 void setupFSK4()
 {
-  // First setup FSK
-  setupFSK();
+  DBGPRNTST(F("[FSK4] Initializing ... "));
+  int16_t state = radio.beginFSK();
+  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
 
   DBGPRNTST(F("[FSK4] Initializing ... "));
-
-  int16_t state = fsk4_setup(&radio, FSK4_FREQ, FSK4_SPACING, FSK4_BAUD);
-  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }         
+  state = fsk4.begin(FSK4_FREQ, FSK4_SPACING, FSK4_BAUD);
+  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
 }
 
 
@@ -225,7 +226,7 @@ void sendFSK4(uint8_t* codedbuffer, size_t coded_len)
   setupFSK4();
 
   // send out idle condition for 1000 ms
-  fsk4_idle(&radio);
+  fsk4.idle();
   delay(FSK4_IDLE_TIME);
 
   DBGPRNTST(F("Sending FSK4 ... ")); DBGFLUSH(); DBGEND();
@@ -233,13 +234,17 @@ void sendFSK4(uint8_t* codedbuffer, size_t coded_len)
   // Use timer 1 interupt to get best timing possible for each tone
   isr_timer1_start(FSK4_BAUD);
 
-  // Send the string
-  fsk4_write(&radio, codedbuffer, coded_len);
-  //if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F("success!")); else { DBGPRNT(F("failed, code: ")); DBGPRNTLN(state); }
+  // Send some bytes preamble
+  for(int i = 0; i < 8; i++) {
+    fsk4.write(0x1B);
+  }
 
+  // Send the string
+  int16_t charsSent = fsk4.write(codedbuffer, coded_len);
+  
   isr_timer1_stop();
 
-  DBGBGN(DBGBAUD); DBGPRNTLN(F("done."));
+  DBGBGN(DBGBAUD); DBGPRNT(F("chars sent: ")); DBGPRNTLN(charsSent);
 
   // Enable gps serial again.  
   SERIALGPS.begin(GPSBAUD);

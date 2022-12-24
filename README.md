@@ -24,10 +24,11 @@ This tracker code is based heavily on the work by Roel Kroes in TBTracker, but n
 	due to - https://github.com/jgromes/RadioLib/issues/596
 	see instructions here - https://github.com/jgromes/RadioLib/wiki/Interrupt-Based-Timing)
 
+- Now using RadioLib native FSK4 routines
 
 ## ToDo
 
-- Use RadioLib FSK4 code rather than my own
+- XX
 
 
 

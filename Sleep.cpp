@@ -8,7 +8,6 @@
 ************************************************************************************/
 #include "Sleep.h"
 
-#include "KWTracker.h"
 #include "Settings.h"
 #include "ADC.h"
 
