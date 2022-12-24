@@ -12,9 +12,8 @@
 #include "Settings.h"
 #include "Horus_L1.h"
 
-// My version of RadioLib using the proceed flag
 // Need to #define RADIOLIB_INTERRUPT_TIMING in BuildOpt.h
-#include <RadioLibKW.h>
+#include <RadioLib.h>
 
 #include <Arduino.h>
 
@@ -57,7 +56,7 @@ void isr_timer1_stop() {
 // Timer interrupt vector. This toggles the variable we use to gate each column of output to ensure accurate timing. 
 // Called whenever Timer1 hits the count set in interruptSetup().
 ISR(TIMER1_COMPA_vect){
-  proceed = true;
+  radio.setTimerFlag();
 } 
 
 
@@ -151,6 +150,9 @@ void resetRadio()
   */
 }
 
+//===============================================================================
+void interruptSetup(uint32_t len) {
+}
 
 //===============================================================================
 void setupRadio()
@@ -159,6 +161,10 @@ void setupRadio()
   setupRTTY();
   setupLoRa();
   setupFSK4();
+
+  // https://github.com/jgromes/RadioLib/wiki/Interrupt-Based-Timing
+  // ToDO Currently we set interupts up ourselves, change to using RadioLib to do it for us.
+  radio.setInterruptSetup(interruptSetup);
 }
 
 

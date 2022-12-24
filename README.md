@@ -6,13 +6,11 @@ This tracker code is based heavily on the work by Roel Kroes in TBTracker, but n
 
 - Addition of all UKHAS / HABHUB / Akerman LoRa Modes
 
-- Refactored into a C++ structure using guarded header files and cpp files (apart from TBTracker.ino is 
-still named .ino to maintain Arduino IDE compatibility), this allows it to be compiled in both Arduino IDE and other C++ compilers 
-like PlatformIO, as well as significantly speeding up development time as the whole program does not need recompiling after every change.
+- Refactored into a C++ structure using guarded header files and cpp files (apart from TBTracker.ino is still named .ino to maintain Arduino IDE compatibility), this allows it to be compiled in both Arduino IDE and other C++ compilers like PlatformIO, as well as significantly speeding up development time as the whole program does not need recompiling after every change.
 
 - Different Debug serial port handling
 
-- Create a smaller RTTY sentence
+- Create a smaller RTTY sentence for quick transmission
 
 - Added ability to use ATMEGA1284P
 
@@ -22,11 +20,15 @@ like PlatformIO, as well as significantly speeding up development time as the wh
 
 - Power down GPS before Tx to save battery (GPS backup power still live)
 
+- Now using RadioLib native interrupt timing routines
+	due to - https://github.com/jgromes/RadioLib/issues/596
+	see instructions here - https://github.com/jgromes/RadioLib/wiki/Interrupt-Based-Timing)
+
+
 ## ToDo
 
 - Use RadioLib FSK4 code rather than my own
 
-- Use RadioLib native interupt based timing rather than my own (https://github.com/jgromes/RadioLib/issues/596)
 
 
 

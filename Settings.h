@@ -98,7 +98,7 @@
 *  
 * Change when needed
 ************************************************************************************/
-#define FSK4_ENABLED true            // Set to true if you want FSK4 transmissions
+#define FSK4_ENABLED false            // Set to true if you want FSK4 transmissions
 #define FSK4_PAYLOAD_ID 333      // Int16 Payload ID for FSK4 protocol, 256 = test for v2 mode
 #define FSK4_FREQ       434.340
 #define FSK4_BAUD       100

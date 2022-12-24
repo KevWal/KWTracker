@@ -6,8 +6,6 @@
 #include "Settings.h"
 #include <Arduino.h>
 
-extern volatile bool proceed; // ISR timing flag
-
 void setupRTTY();
 
 void setupFSK();
