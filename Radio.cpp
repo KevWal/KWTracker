@@ -67,8 +67,8 @@ void setupFSK()
   // Reset the radio
   resetRadio();
 
-  // Initialize the SX1278
-  DBGPRNTST(F("[SX1278] Initializing ... "));
+  // Initialize FSK
+  DBGPRNTST(F("[FSK] Initializing ... "));
 
   int16_t state = radio.beginFSK(FSK_FREQUENCY, FSK_BITRATE, FSK_FREQDEV, FSK_RXBANDWIDTH, FSK_POWER, FSK_PREAMBLELENGTH, FSK_ENABLEOOK);
   if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
@@ -128,12 +128,11 @@ void setupLoRa()
 // Initialize the SX1278 for Horus FSK4
 void setupFSK4()
 {
-  DBGPRNTST(F("[FSK4] Initializing ... "));
-  int16_t state = radio.beginFSK();
-  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
+  // First setup FSK
+  setupFSK();
 
   DBGPRNTST(F("[FSK4] Initializing ... "));
-  state = fsk4.begin(FSK4_FREQ, FSK4_SPACING, FSK4_BAUD);
+  int16_t state = fsk4.begin(FSK4_FREQ, FSK4_SPACING, FSK4_BAUD);
   if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
 }
 
@@ -225,14 +224,16 @@ void sendFSK4(uint8_t* codedbuffer, size_t coded_len)
   
   setupFSK4();
 
+  DBGPRNTST(F("FSK4 Idle. ")); DBGFLUSH();
+
+  // Use timer 1 interupt to get best timing possible for each tone
+  isr_timer1_start(FSK4_BAUD);
+
   // send out idle condition for 1000 ms
   fsk4.idle();
   delay(FSK4_IDLE_TIME);
 
   DBGPRNTST(F("Sending FSK4 ... ")); DBGFLUSH(); DBGEND();
-   
-  // Use timer 1 interupt to get best timing possible for each tone
-  isr_timer1_start(FSK4_BAUD);
 
   // Send some bytes preamble
   for(int i = 0; i < 8; i++) {

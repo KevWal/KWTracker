@@ -17,7 +17,7 @@
 /***********************************************************************************
 * DEFAULT FSK SETTINGS
 *  
-* Normally needs no change, just base settings, not used for RTTY, Lora nor FSK4 modes
+* Normally needs no change, just base settings, not used for RTTY, Lora nor FSK4 modes apart from POWER
 ************************************************************************************/
 #define FSK_FREQUENCY 434.0   // FSK Frequency in Mhz, Default 434.0, not used
 #define FSK_BITRATE 4.8       // FSK Bit rate in kbps (kilobits per second). Default 4.8. Allowed values range from 1.2 to 300.0 kbps, not used
@@ -27,7 +27,7 @@
 #define FSK_PREAMBLELENGTH 16 // Default 16, not used
 #define FSK_ENABLEOOK false   // Use OOK (On Off Keying) modulation instead of FSK. Default False
 
-#define FSK_POWER 10          // FSK Power in dBm, Default 10, valid between 2 and 17. 10 = 10mW (recommended). *Sets RTTY power
+#define FSK_POWER 10          // FSK Power in dBm, Default 10, valid between 2 and 17. 10 = 10mW (recommended). ***Sets RTTY & FSK4 power
 
 
 /***********************************************************************************
@@ -70,6 +70,7 @@
 #define LORA_CURRENTLIMIT 80         // in mA, accepted range is 0 (protection disabled), 45 - 240 mA
 #define LORA_PREAMBLELENGTH 8        // length of LoRa preamble in symbols, allowed values range from 6 to 65535
 #define LORA_GAIN 0                  // gain of receiver LNA. Can be set to any integer in range 1 to 6 where 1 is the highest gain. Set to 0 to enable automatic gain control (recommended).
+
 #define LORA_MODE 5                  // See HAB LoRa modes below
 #define LORA_REPEATS 3               // number of LoRa transmits during a cycle
 
@@ -103,8 +104,6 @@
 #define FSK4_FREQ       434.340
 #define FSK4_BAUD       100
 #define FSK4_SPACING    244          // 270 results in a shift of 244 Hz due to the PLL Resolution of the SX127x
-#define FSK4_POWER 10                // in dBm between 2 and 17. 10 = 10mW (recommended)
-#define FSK4_CURRENTLIMIT 80         // in mA, accepted range is 0 (protection disabled), 45 - 240 mA
 
 #define FSK4_IDLE_TIME 2000         // Idle carrier in ms before sending actual FSK4 string.
 
