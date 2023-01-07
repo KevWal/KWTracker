@@ -1,12 +1,16 @@
 # KW Tracker Updates
 
-This tracker code is based heavily on the work by Roel Kroes in TBTracker, but now heavily modified by me.
+This tracker code is based heavily on the work by Roel Kroes in TBTracker, but now heavily modified by me, Kevin Walton.
 
 - Added Horus 4FSK Mode support
 
 - Addition of all UKHAS / HABHUB / Akerman LoRa Modes
 
+- Addition of TinyGS.com compatibility
+
 - Refactored into a C++ structure using guarded header files and cpp files (apart from TBTracker.ino is still named .ino to maintain Arduino IDE compatibility).  This allows it to be compiled in both Arduino IDE and other C++ compilers like PlatformIO, as well as significantly speeding up development time as the whole program does not need recompiling after every change.
+
+- Added support for Airborne and Pedestrian modes - needed for UBlox GPS's
 
 - Different Debug serial port handling
 
@@ -66,8 +70,6 @@ To run this, you need a TTGO T-Deer board or:
  *  1 x SX1278 LoRa chip (or compatible LoRa chip. Basically it will work with all sx127x series chips)
  *  1 x ATGM336H, BN220 GPS (9600 Baud) or any UBlox or compatible GPS device like a NEO6 or NEO8. I recommend the ATGM336H GPS module. 
 
-Note that currently setting different flightmodes in uBlox GPS modules is not supported. This could cause GPS failures above 18km when using uBlox GPS modules. I recommend using the ATGM336H GPS modules.
- 
 Connect the T-Deer as an Arduino Mini to the Arduino IDE.
 Many parameters are user adjustable in settings.h
  
