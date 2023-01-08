@@ -34,7 +34,17 @@ This tracker code is based heavily on the work by Roel Kroes in TBTracker, but n
 
 - Test the Power / Current Limit code
 
+## TinyGS.com Compatibility
 
+We are asking the TinyGS Network to have a default listening setup (when no satellites are in view) of:
+
+- 433.662Mhz, Modes 2 = SF: 8 CR: 5 BW: 62.5 kHz
+
+- "Modem startup" of {"mode":"LoRa","sat":"Default","freq":433.662,"bw":62.5,"pl":8,"pwr":0,"sf":8,"cr":8,"sw":18,"crc":true,"fldro":0,"cl":0,"gain":0}
+
+- Modem Startup string is documented here: https://github.com/G4lile0/tinyGS/wiki/Radio-Tuning-Guide
+
+- "Advanced Parameters" of {"dmode":9} gets extra logging
 
 
 # Original TBTracker Readme

@@ -20,7 +20,7 @@ extern TGPS UGPS;
 extern char Sentence[SENTENCE_LENGTH];
 
 /***********************************************************************************
-* The function CreateTXLine generates two payload sentences to transmit. One
+* CreateTXLine generates two payload sentences to transmit. One
 * for RTTY and one for LoRa. These sentences are compatible with the habhub tracker.
 * 
 * Run the software and decode your payload sentences. 
@@ -50,7 +50,7 @@ void createLoRaTXLine(const char *PayloadID, unsigned long aCounter, const char 
 {
    int Count, i, j;
    unsigned int CRC;
-   char LatitudeString[16], LongitudeString[16];
+   char LatitudeString[16], LongitudeString[16], HeadingString[16];
    char InternalTemp[10];
    char VccVoltage[10];
    char BattVoltage[10];
@@ -69,15 +69,18 @@ void createLoRaTXLine(const char *PayloadID, unsigned long aCounter, const char 
   // Get the external voltage
   dtostrf(readExternalVoltage(), 4, 2, BattVoltage);
   DBGPRNTST(F("BattVoltage: ")); DBGPRNTLN(BattVoltage);
-         
+
+  dtostrf(UGPS.Heading, 0, 0, HeadingString);
+  DBGPRNTST(F("Heading: ")); DBGPRNTLN(HeadingString);
+
   dtostrf(UGPS.Latitude, 7, 5, LatitudeString);
   dtostrf(UGPS.Longitude, 7, 5, LongitudeString);   
    
   sprintf(Sentence,
 #if defined(USE_FIELDSTR)
-            "%s%s,%ld,%02d:%02d:%02d,%s,%s,%ld,%u,%s,%s,%s,%s",
+            "%s%s,%ld,%02d:%02d:%02d,%s,%s,%ld,%u,%s,%s,%s,%s,%s",
 #else
-            "%s%s,%ld,%02d:%02d:%02d,%s,%s,%ld,%u,%s,%s,%s",
+            "%s%s,%ld,%02d:%02d:%02d,%s,%s,%ld,%u,%s,%s,%s,%s",
 #endif
             aPrefix,
             PayloadID,
@@ -87,12 +90,13 @@ void createLoRaTXLine(const char *PayloadID, unsigned long aCounter, const char 
             LongitudeString,
             UGPS.Altitude,
             UGPS.Satellites,
+            HeadingString,
             InternalTemp,
-            VccVoltage,
-            BattVoltage
+            BattVoltage,
+            VccVoltage
 #if defined(USE_FIELDSTR)            
             ,
-			      FIELDSTR
+            FIELDSTR
 #endif
   );
 
@@ -122,28 +126,6 @@ void createLoRaTXLine(const char *PayloadID, unsigned long aCounter, const char 
   Sentence[Count++] = '\0';
 
   DBGPRNTST(F("TX Line: ")); DBGPRNT(Sentence);
-
-//#ifndef LORA_EXPLICITMODE
-  // In Implicit mode we dont Tx a LoRa header, lora-gateway then expects a 255 byte string
-//  DBGPRNTST(F("Implicit mode - Start Count = ")); DBGPRNT(Count); DBGPRNT(" ");
-
-  // Overwrite the \n \0
-  //Sentence[Count - 2] = ' ';
-  //Sentence[Count - 1] = ' ';
-
-//  for (;Count < 255 - 1;) // 254
-//  {
-//    Sentence[Count++] = ' '; // Over write /0 on first iteration
-    //DBGPRNT(">");
-//  }
-
-//  Sentence[Count++] = '\n';
-//  Sentence[Count] = '\0';
-
-//  DBGPRNT(" End Count = "); DBGPRNT(Count); DBGPRNTLN(".");
-//#endif
-
-  
 }
 
 

@@ -103,13 +103,17 @@ void processGPSData()
    DBGPRNT(F("Alt not valid, "));
  }
 
-// Speed
-if (gps.speed.isValid())
+// Speed & Heading
+if (gps.speed.isValid() && gps.course.isValid())
+  {
     UGPS.Speed = gps.speed.kmph();
+    UGPS.Heading = gps.course.deg();
+  }
  else
  {
    UGPS.Speed = 0;
-   DBGPRNT(F("Speed not valid, "));
+   UGPS.Heading = 0;
+   DBGPRNT(F("Speed & Heading not valid, "));
  }
 
  if (UGPS.Altitude < 0)

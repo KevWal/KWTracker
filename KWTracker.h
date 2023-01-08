@@ -18,7 +18,7 @@ struct TGPS
   long Altitude;
   unsigned int Satellites;
   uint8_t FlightMode;
-  double Speed;
+  double Speed, Heading;
 };
 
 #endif
