@@ -115,6 +115,8 @@ void loop()
 
       if (UGPS.Satellites > 5) // If we have a reasonable GPS signal, reduce power usage by turning off GPS before we try and transmit.
         disablePowerPins();
+      else
+       DBGPRNTSTLN(F("GPS not powered off."));;
 
       previousTX = currentMillis;
     
