@@ -64,7 +64,8 @@
 #define LORA_PAYLOAD_ID "KW-BCK2"   // Payload ID for LoRa protocol
 //#define LORA_FREQUENCY 434.562      // Can be different from RTTY frequency
 //#define LORA_FREQUENCY 433.650      // Can be different from RTTY frequency
-#define LORA_FREQUENCY 433.662      // Can be different from RTTY frequency
+//#define LORA_FREQUENCY 433.662      // Can be different from RTTY frequency
+#define LORA_FREQUENCY 433.090      // Can be different from RTTY frequency
 #define LORA_PREFIX "$$"             // Some older LoRa software does not accept a prefix of more than 2x "$"
 #define LORA_SYNCWORD 0x12           // for sx1278
 // #define LORA_SYNCWORD 0x1424      // for sx1262 (currently not supported)
@@ -75,7 +76,7 @@
 
 //#define LORA_MODE 5                // See HAB LoRa modes below
 #define LORA_MODE 2                  // See HAB LoRa modes below
-#define LORA_REPEATS 30              // number of LoRa transmits during a cycle
+#define LORA_REPEATS 3              // number of LoRa transmits during a cycle
 
 // HAB LoRa Modes:
 // Narrower bandwidth improves range, higher spreading factor increases reslience, higher error coding rate increases Forward Error Correction
