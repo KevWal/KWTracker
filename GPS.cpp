@@ -37,7 +37,7 @@ void smartDelay(unsigned long ms)
   {
     // Read from GPS and feed into TinyGPS++
     if (SERIALGPS.available()) gps.encode(SERIALGPS.read());
-    // if (SERIALGPS.available()) SERIALDBG.write(SERIALGPS.read());  // GPS Debugging
+    //if (SERIALGPS.available()) SERIALDBG.write(SERIALGPS.read());  // GPS Debugging
     // Toggle LED fast if less than X sats, slow if more than 4 sats.
 #ifdef LED
     if (gps.satellites.value() < 5 && gps.altitude.meters() < 1000) digitalWrite(LED, millis()%150>75);

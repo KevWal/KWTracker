@@ -31,6 +31,7 @@
 #define FSK_CURRENTLIMIT 80   // in mA, accepted range is 0 (protection disabled), 45 - 240 mA
 
 
+
 /***********************************************************************************
 * RTTY SETTINGS
 *  
@@ -55,6 +56,7 @@
 #define RTTY_IDLE_TIME 2000          
  
  
+
 /***********************************************************************************
 * LORA SETTINGS
 *  
@@ -97,13 +99,17 @@
 // IR2030/1/11 433.05-434.79 MHz 1mW erp (no duty cycle limit);
 // IR2030/1/12 433.04-434.79 MHz 10 mW e.r.p. Channel Spacing <= 25 kHz
 
+// HAB LoRa Mode 2 compatabile with TinyGS configured with a "Modem startup" string of 
+// {"mode":"LoRa","sat":"Default","freq":433.662,"bw":62.5,"pl":8,"pwr":0,"sf":8,"cr":8,"sw":18,"crc":true,"fldro":0,"cl":0,"gain":0}
+
+
 
 /***********************************************************************************
 * HORUS FSK4 Settings
 *  
 * Change when needed
 ************************************************************************************/
-#define FSK4_ENABLED false            // Set to true if you want FSK4 transmissions
+#define FSK4_ENABLED true            // Set to true if you want FSK4 transmissions
 #define FSK4_PAYLOAD_ID 333        // Int16 Payload ID for FSK4 protocol, 256 = test for v2 mode
 #define FSK4_FREQ       434.340
 #define FSK4_BAUD       100
@@ -112,6 +118,7 @@
 #define FSK4_IDLE_TIME 2000         // Idle carrier in ms before sending actual FSK4 string.
 
 #define FSK4_REPEATS 3              // number of FSK4 transmits during a cycle
+
 
 
 /***********************************************************************************
@@ -124,7 +131,7 @@
 // Allow time for the GPS to re-acquire a fix when using sleep mode!
 #define USE_DEEP_SLEEP true     // Put the ATMEGA chip to deep sleep while not transmitting. set to true or false.
                                 // The tracker will only go to sleep if there are more than X satellites visible   
-#define TIME_TO_SLEEP  10      // This is the number in seconds out of TX_LOOP_TIME that the CPU is in sleep. Only valid when USE_DEEP_SLEEP = true
+#define TIME_TO_SLEEP  30      // This is the number in seconds out of TX_LOOP_TIME that the CPU is in sleep. Only valid when USE_DEEP_SLEEP = true
 
 #define TX_LOOP_TIME   30       // When USE_DEEP_SLEEP=false: Number in seconds between transmits
                                 // When USE_DEEP_SLEEP=true : Time between transmits is TIME_TO_SLEEP+TX_LOOP_TIME+time it takes to transmit the data
