@@ -10,7 +10,7 @@
 
 #include "Settings.h"
 
-// Need to #define RADIOLIB_INTERRUPT_TIMING in BuildOpt.h
+// Need to #define RADIOLIB_INTERRUPT_TIMING in BuildOpt.h or BuildOptUser.h in RadioLib library
 #include <RadioLib.h>
 
 #include <Arduino.h>
@@ -56,6 +56,7 @@ void isr_timer1_stop() {
 
 // Timer interrupt vector. This toggles the variable we use to gate each column of output to ensure accurate timing. 
 // Called whenever Timer1 hits the count set in interruptSetup().
+// Need to #define RADIOLIB_INTERRUPT_TIMING in BuildOpt.h or BuildOptUser.h in RadioLib library to enable
 ISR(TIMER1_COMPA_vect){
   radio.setTimerFlag();
 } 

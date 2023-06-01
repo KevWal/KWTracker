@@ -14,6 +14,7 @@
  *
  *  Extra libraries needed:
  *  https://github.com/jgromes/RadioLib (Radiolib)
+ *    Note bug in v6.0.0. https://github.com/jgromes/RadioLib/pull/763
  *  https://github.com/mikalhart/TinyGPSPlus (tinyGPS++)
  *
  ************************************************************************************/
