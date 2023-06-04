@@ -72,7 +72,7 @@ void setupFSK()
   DBGPRNTST(F("[FSK] Initializing ... "));
 
   int16_t state = radio.beginFSK(FSK_FREQUENCY, FSK_BITRATE, FSK_FREQDEV, FSK_RXBANDWIDTH, FSK_POWER, FSK_PREAMBLELENGTH, FSK_ENABLEOOK);
-  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
+  if (state == RADIOLIB_ERR_NONE) { DBGPRNTLN(F(" success!")); } else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
 
   // set over current protection limit to 80 mA (accepted range is 45 - 240 mA)
   // NOTE: set value to 0 to disable overcurrent protection
@@ -92,7 +92,7 @@ void setupRTTY()
   DBGPRNTST(F("[RTTY] Initializing ... "));
 
   int16_t state = rtty.begin(RTTY_FREQUENCY, RTTY_SHIFT, RTTY_BAUD, RTTY_MODE, RTTY_STOPBITS);
-  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }         
+  if (state == RADIOLIB_ERR_NONE) { DBGPRNTLN(F(" success!")); } else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }         
 }
 
 
@@ -105,7 +105,7 @@ void setupLoRa()
   resetRadio();
 
   int16_t state = radio.begin(LORA_FREQUENCY, LORA_BW, LORA_SPREADFACTOR, LORA_CODERATE, LORA_SYNCWORD, LORA_POWER, LORA_PREAMBLELENGTH, LORA_GAIN);
-  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
+  if (state == RADIOLIB_ERR_NONE) { DBGPRNTLN(F(" success!")); } else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
 
 #ifdef LORA_EXPLICITMODE
   state = radio.explicitHeader();
@@ -141,7 +141,7 @@ void setupFSK4()
 
   DBGPRNTST(F("[FSK4] Initializing ... "));
   int16_t state = fsk4.begin(FSK4_FREQ, FSK4_SPACING, FSK4_BAUD);
-  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F(" success!")); else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
+  if (state == RADIOLIB_ERR_NONE) { DBGPRNTLN(F(" success!")); } else { DBGPRNT(F(" failed, code: ")); DBGPRNTLN(state); }
 }
 
 
@@ -220,7 +220,7 @@ void sendLoRa(const char* TxLine)
 #else
   int16_t state = radio.transmit((uint8_t*)TxLine, 255); // Send a full 255 chars
 #endif
-  if (state == RADIOLIB_ERR_NONE) DBGPRNTLN(F("success!")); else { DBGPRNT(F("failed, code: ")); DBGPRNTLN(state); }
+  if (state == RADIOLIB_ERR_NONE) { DBGPRNTLN(F("success!")); } else { DBGPRNT(F("failed, code: ")); DBGPRNTLN(state); }
 }
 
 

@@ -63,7 +63,7 @@
 * Change when needed
 ************************************************************************************/
 #define LORA_ENABLED true            // Set to true if you want LoRa transmissions (You can use Both LoRa and RTTY or only one of the two)
-#define LORA_PAYLOAD_ID "KW-BCK2"   // Payload ID for LoRa protocol
+#define LORA_PAYLOAD_ID "KW-BCK3"   // Payload ID for LoRa protocol
 //#define LORA_FREQUENCY 434.562      // Can be different from RTTY frequency
 //#define LORA_FREQUENCY 433.650      // Can be different from RTTY frequency
 //#define LORA_FREQUENCY 433.662      // Can be different from RTTY frequency
@@ -115,9 +115,9 @@
 #define FSK4_BAUD       100
 #define FSK4_SPACING    244          // 270 results in a shift of 244 Hz due to the PLL Resolution of the SX127x
 
-#define FSK4_IDLE_TIME 2000         // Idle carrier in ms before sending actual FSK4 string.
+#define FSK4_IDLE_TIME 1500         // Idle carrier in ms before sending actual FSK4 string.
 
-#define FSK4_REPEATS 3              // number of FSK4 transmits during a cycle
+#define FSK4_REPEATS 2              // number of FSK4 transmits during a cycle
 
 
 
